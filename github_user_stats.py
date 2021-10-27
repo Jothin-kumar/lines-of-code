@@ -1,6 +1,6 @@
 from github import Github, Repository
 
-github = Github('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')
+github = Github('<token>')
 user = github.get_user()
 
 
