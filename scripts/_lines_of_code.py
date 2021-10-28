@@ -95,24 +95,30 @@ def crawl(token: str, user_id=None):
                 )
                 try:
                     execute_bind('<inform>', f'Looking for contribution in {forked_from.full_name}')
-                    contributed_repo = ContributedRepository(contributed_to=forked_from, user=user)
-                    execute_bind(
-                        '<inform>',
-                        f'Found {contributed_repo.total_lines_of_addition_in_contribution} additions'
-                        f' and {contributed_repo.total_lines_of_deletion_in_contribution} deletions.'
-                    )
-                    contributed_repos.append(contributed_repo)
+                    try:
+                        contributed_repo = ContributedRepository(contributed_to=forked_from, user=user)
+                        execute_bind(
+                            '<inform>',
+                            f'Found {contributed_repo.total_lines_of_addition_in_contribution} additions'
+                            f' and {contributed_repo.total_lines_of_deletion_in_contribution} deletions.'
+                        )
+                        contributed_repos.append(contributed_repo)
+                    except Exception as e:
+                        execute_bind('<report error>', e)
                 except NotContributedError:
                     execute_bind('<inform>', f'No contribution found in {forked_from.full_name}.')
             else:
                 execute_bind('<inform>', f'Looking for additions and deletions in {repo.name}...')
-                own_repo = OwnedRepository(owned_repository=repo, user=user)
-                execute_bind(
-                    '<inform>',
-                    f'Found {own_repo.total_lines_of_addition} additions and'
-                    f'{own_repo.total_lines_of_deletion} in {own_repo.name}.'
-                )
-                own_repos.append(own_repo)
+                try:
+                    own_repo = OwnedRepository(owned_repository=repo, user=user)
+                    execute_bind(
+                        '<inform>',
+                        f'Found {own_repo.total_lines_of_addition} additions and'
+                        f' {own_repo.total_lines_of_deletion} deletions in {own_repo.name}.'
+                    )
+                    own_repos.append(own_repo)
+                except Exception as e:
+                    execute_bind('<report error>', e)
     else:
         user = github.get_user()
         execute_bind('<inform>', f'Hello {user.name}!')
@@ -129,21 +135,27 @@ def crawl(token: str, user_id=None):
                 )
                 try:
                     execute_bind('<inform>', f'Looking for contribution in {forked_from.full_name}')
-                    contributed_repo = ContributedRepository(contributed_to=forked_from, user=user)
-                    execute_bind(
-                        '<inform>',
-                        f'Found {contributed_repo.total_lines_of_addition_in_contribution} additions'
-                        f' and {contributed_repo.total_lines_of_deletion_in_contribution} deletions.'
-                    )
-                    contributed_repos.append(contributed_repo)
+                    try:
+                        contributed_repo = ContributedRepository(contributed_to=forked_from, user=user)
+                        execute_bind(
+                            '<inform>',
+                            f'Found {contributed_repo.total_lines_of_addition_in_contribution} additions'
+                            f' and {contributed_repo.total_lines_of_deletion_in_contribution} deletions.'
+                        )
+                        contributed_repos.append(contributed_repo)
+                    except Exception as e:
+                        execute_bind('<report error>', e)
                 except NotContributedError:
                     execute_bind('<inform>', f'No contribution found in {forked_from.full_name}')
             else:
                 execute_bind('<inform>', f'Looking for additions and deletions in {repo.name}...')
-                own_repo = OwnedRepository(owned_repository=repo, user=user)
-                execute_bind(
-                    '<inform>',
-                    f'Found {own_repo.total_lines_of_addition} additions and '
-                    f'{own_repo.total_lines_of_deletion} deletions in {own_repo.name}.'
-                )
-                own_repos.append(own_repo)
+                try:
+                    own_repo = OwnedRepository(owned_repository=repo, user=user)
+                    execute_bind(
+                        '<inform>',
+                        f'Found {own_repo.total_lines_of_addition} additions and '
+                        f'{own_repo.total_lines_of_deletion} deletions in {own_repo.name}.'
+                    )
+                    own_repos.append(own_repo)
+                except Exception as e:
+                    execute_bind('<report error>', e)
