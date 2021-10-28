@@ -21,4 +21,45 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-#  Coming soon...
+import _lines_of_code
+
+
+token = input('Please enter you token: ')
+user_id = input('Please enter an user id (Leave blank to scan your own account): ')
+if user_id:
+    user_id = int(user_id)
+_lines_of_code.bind('<inform>', print)
+_lines_of_code.bind('<report error>', print)
+_lines_of_code.crawl(
+    token=token,
+    user_id=user_id
+)
+print('Results')
+print('Lines in own repos')
+total_lines_added_in_own_repos = 0
+total_lines_deleted_in_own_repos = 0
+for own_repo in _lines_of_code.own_repos:
+    total_lines_added_in_own_repos += own_repo.total_lines_of_addition
+    total_lines_deleted_in_own_repos += own_repo.total_lines_of_deletion
+    print('*'*15)
+    print('Name:', own_repo.name)
+    print('Addition:', own_repo.total_lines_of_addition)
+    print('Deletion:', own_repo.total_lines_of_deletion)
+    print('-'*15)
+print('Lines in other repos')
+total_lines_added_in_other_repos = 0
+total_lines_deleted_in_other_repos = 0
+for contributed_repo in _lines_of_code.contributed_repos:
+    total_lines_added_in_other_repos += contributed_repo.total_lines_of_addition_in_contribution
+    total_lines_deleted_in_other_repos += contributed_repo.total_lines_of_deletion_in_contribution
+    print('*'*15)
+    print('Name:', contributed_repo.name)
+    print('Addition:', contributed_repo.total_lines_of_addition_in_contribution)
+    print('Deletion:', contributed_repo.total_lines_of_deletion_in_contribution)
+    print('-'*15)
+print('Total lines added in own repos:', total_lines_added_in_own_repos)
+print('Total lines deleted in own repos:', total_lines_deleted_in_own_repos)
+print('Total lines added in other repos:', total_lines_added_in_other_repos)
+print('Total lines deleted in other repos:', total_lines_deleted_in_other_repos)
+print('Total lines added:', total_lines_added_in_own_repos + total_lines_added_in_other_repos)
+print('Total lines deleted:', total_lines_deleted_in_own_repos + total_lines_deleted_in_other_repos)
