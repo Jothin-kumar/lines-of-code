@@ -19,6 +19,10 @@ def execute_bind(id_, message):
         raise NoBindForFunctionError(f'No bind is added for {id_}.')
 
 
+class NotContributedError(Exception):
+    pass
+
+
 class ContributedRepository:
     def __init__(self, contributed_to: Repository, user):
         self.total_lines_of_addition_in_contribution = 0
@@ -30,7 +34,7 @@ class ContributedRepository:
                     self.total_lines_of_addition_in_contribution += week.a
                     self.total_lines_of_deletion_in_contribution += week.d
         if not any([self.total_lines_of_addition_in_contribution, self.total_lines_of_deletion_in_contribution]):
-            raise ValueError('User have not contributed to this repository.')
+            raise NotContributedError('User have not contributed to this repository.')
 
 
 class OwnedRepository:
@@ -75,7 +79,7 @@ def crawl(token: str, user_id=None):
                         f' and {contributed_repo.total_lines_of_deletion_in_contribution} deletions.'
                     )
                     contributed_repos.append(contributed_repo)
-                except ValueError:
+                except NotContributedError:
                     execute_bind('<inform>', f'No contribution found in {forked_from.full_name}.')
             else:
                 execute_bind('<inform>', f'Looking for additions and deletions in {repo.name}...')
@@ -109,7 +113,7 @@ def crawl(token: str, user_id=None):
                         f' and {contributed_repo.total_lines_of_deletion_in_contribution} deletions.'
                     )
                     contributed_repos.append(contributed_repo)
-                except ValueError:
+                except NotContributedError:
                     execute_bind('<inform>', f'No contribution found in {forked_from.full_name}')
             else:
                 execute_bind('<inform>', f'Looking for additions and deletions in {repo.name}...')
