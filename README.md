@@ -6,7 +6,7 @@ to calculate the total number of lines you (or your friends!) have written,
  - navigate to lines-of-code/scripts using ```cd "lines-of-code/scripts"```.
  - run terminal.py using ```python terminal.py``` in windows and ```python3 terminal.py``` in ubuntu.
  - Enter the token generated in step 2.
- - Enter user id or leave it blank to calculate your total lines of code. To find a person's user id, follow the steps [here](#How_to_find_a_persons_user_id_11).
+ - Enter user id or leave it blank to calculate your total lines of code. To find a person's user id, follow the steps [here](#how-to-find-a-persons-user-id).
  - Wait for it to complete calculating.
  - Done!
 ## How to find a person's user id
