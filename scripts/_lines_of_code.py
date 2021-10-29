@@ -82,7 +82,10 @@ def crawl(token: str, user_id=None):
         execute_bind('<inform>', f'Finding user using id: {user_id}...')
         user = github.get_user_by_id(user_id)
         execute_bind('<inform>', f'Found user {user.name}!')
-        execute_bind('<inform>', f'Scanning {user.name}\'s repos...')
+        if user.name:
+            execute_bind('<inform>', f'Scanning {user.name}\'s repos...')
+        else:
+            execute_bind('<inform>', f'Scanning {user.login}\'s repos...')
         repos = user.get_repos()
         execute_bind('<inform>', f'Found {len(list(repos))} repos...')
         for repo in repos:
@@ -121,7 +124,10 @@ def crawl(token: str, user_id=None):
                     execute_bind('<report error>', e)
     else:
         user = github.get_user()
-        execute_bind('<inform>', f'Hello {user.name}!')
+        if user.name:
+            execute_bind('<inform>', f'Hello {user.name}!')
+        else:
+            execute_bind('<inform>', f'Hello {user.login}!')
         execute_bind('<inform>', 'Scanning your repos...')
         repos = user.get_repos()
         execute_bind('<inform>', f'Found {len(list(repos))} repos!')
