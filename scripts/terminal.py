@@ -41,6 +41,7 @@ print('Results')
 print('Lines in own repos')
 total_lines_added_in_own_repos = 0
 total_lines_deleted_in_own_repos = 0
+
 for own_repo in _lines_of_code.own_repos:
     total_lines_added_in_own_repos += own_repo.net_addition
     total_lines_deleted_in_own_repos += own_repo.net_deletion
@@ -52,14 +53,16 @@ for own_repo in _lines_of_code.own_repos:
 print('Lines in other repos')
 total_lines_added_in_other_repos = 0
 total_lines_deleted_in_other_repos = 0
+
 for contributed_repo in _lines_of_code.contributed_repos:
-    total_lines_added_in_other_repos += contributed_repo.total_lines_of_addition_in_contribution
-    total_lines_deleted_in_other_repos += contributed_repo.total_lines_of_deletion_in_contribution
+    total_lines_added_in_other_repos += contributed_repo.net_addition_in_contribution
+    total_lines_deleted_in_other_repos += contributed_repo.net_deletion_in_contribution
     print('*'*15)
     print('Name:', contributed_repo.name)
-    print('Addition:', contributed_repo.total_lines_of_addition_in_contribution)
-    print('Deletion:', contributed_repo.total_lines_of_deletion_in_contribution)
+    print('Addition:', contributed_repo.net_addition_in_contribution)
+    print('Deletion:', contributed_repo.net_deletion_in_contribution)
     print('-'*15)
+
 print('Total lines added in repos with write access (Owned repos or collaborated repos):', total_lines_added_in_own_repos)
 print('Total lines deleted in repos with write access (Owned repos or collaborated repos):', total_lines_deleted_in_own_repos)
 print('Total lines added in other repos (PRs):', total_lines_added_in_other_repos)
