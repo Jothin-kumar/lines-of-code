@@ -22,10 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import _lines_of_code
+from github import Github
 
 
 token = input('Please enter you token: ')
-user_id = input('Please enter an user id (Leave blank to scan your own account): ')
+user_name = input('Input a Github user\'s name (or leave it blank for your own account): ')
+g = Github(token)
+user_id = g.get_user(user_name).id
 if user_id:
     user_id = int(user_id)
 _lines_of_code.bind('<inform>', print)
@@ -39,12 +42,12 @@ print('Lines in own repos')
 total_lines_added_in_own_repos = 0
 total_lines_deleted_in_own_repos = 0
 for own_repo in _lines_of_code.own_repos:
-    total_lines_added_in_own_repos += own_repo.total_lines_of_addition
-    total_lines_deleted_in_own_repos += own_repo.total_lines_of_deletion
+    total_lines_added_in_own_repos += own_repo.net_addition
+    total_lines_deleted_in_own_repos += own_repo.net_deletion
     print('*'*15)
     print('Name:', own_repo.name)
-    print('Addition:', own_repo.total_lines_of_addition)
-    print('Deletion:', own_repo.total_lines_of_deletion)
+    print('Addition:', own_repo.net_addition)
+    print('Deletion:', own_repo.net_deletion)
     print('-'*15)
 print('Lines in other repos')
 total_lines_added_in_other_repos = 0

@@ -45,7 +45,12 @@ def execute_bind(id_, message):
 class NotContributedError(Exception):
     pass
 
-
+excepted_files = [
+    'package.json',
+    'package-lock.json',
+    '.gitignore',
+    'yarn.lock'
+]
 class ContributedRepository:
     def __init__(self, contributed_to: Repository, user):
         self.total_lines_of_addition_in_contribution = 0
@@ -64,13 +69,31 @@ class OwnedRepository:
     def __init__(self, owned_repository: Repository, user):
         self.total_lines_of_addition = 0
         self.total_lines_of_deletion = 0
+        self.excepted_lines_of_addition = 0
+        self.excepted_lines_of_deletion = 0
         self.name = owned_repository.name
+
         for contribution in owned_repository.get_stats_contributors():
             if contribution.author.id == user.id:
                 for week in contribution.weeks:
                     self.total_lines_of_addition += week.a
                     self.total_lines_of_deletion += week.d
 
+        if (owned_repository.get_commits().totalCount >= 100):
+            print('This repository has a lot of commits! This can take some time...')
+
+        # Get all of the additions / deletions of the excepted files
+        for commit in owned_repository.get_commits():
+            if commit.author.id == user.id:
+                for file in commit.files:
+                    if file.filename in excepted_files:
+                        self.excepted_lines_of_addition += file.additions
+                        self.excepted_lines_of_deletion += file.deletions
+
+
+        # Define net addition and deletion, substracting the excluded lines from the total ones.
+        self.net_addition = self.total_lines_of_addition - self.excepted_lines_of_addition
+        self.net_deletion = self.total_lines_of_deletion - self.excepted_lines_of_deletion
 
 contributed_repos = []
 own_repos = []
@@ -117,8 +140,8 @@ def crawl(token: str, user_id=None):
                     own_repo = OwnedRepository(owned_repository=repo, user=user)
                     execute_bind(
                         '<inform>',
-                        f'Found {own_repo.total_lines_of_addition} additions and'
-                        f' {own_repo.total_lines_of_deletion} deletions in {own_repo.name}.'
+                        f'Found {own_repo.net_addition} additions and'
+                        f' {own_repo.net_deletion} deletions in {own_repo.name}.'
                     )
                     own_repos.append(own_repo)
                 except Exception as e:
@@ -129,9 +152,11 @@ def crawl(token: str, user_id=None):
             execute_bind('<inform>', f'Hello {user.name}!')
         else:
             execute_bind('<inform>', f'Hello {user.login}!')
+
         execute_bind('<inform>', 'Scanning your repos...')
         repos = user.get_repos()
         execute_bind('<inform>', f'Found {len(list(repos))} repos!')
+
         for repo in repos:
             execute_bind('<inform>', f'Crawling {repo.name}')
             if repo.fork:
@@ -160,8 +185,8 @@ def crawl(token: str, user_id=None):
                     own_repo = OwnedRepository(owned_repository=repo, user=user)
                     execute_bind(
                         '<inform>',
-                        f'Found {own_repo.total_lines_of_addition} additions and '
-                        f'{own_repo.total_lines_of_deletion} deletions in {own_repo.name}.'
+                        f'Found {own_repo.net_addition} additions and '
+                        f'{own_repo.net_deletion} deletions in {own_repo.name}.'
                     )
                     own_repos.append(own_repo)
                 except Exception as e:
