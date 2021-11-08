@@ -55,58 +55,46 @@ class ContributedRepository:
     def __init__(self, contributed_to: Repository, user):
         self.total_lines_of_addition_in_contribution = 0
         self.total_lines_of_deletion_in_contribution = 0
-        self.excepted_lines_of_addition_in_contribution = 0
-        self.excepted_lines_of_deletion_in_contribution = 0
         self.name = contributed_to.full_name
 
-        for contribution in contributed_to.get_stats_contributors():
-            if contribution.author.id == user.id:
-                for week in contribution.weeks:
-                    self.total_lines_of_addition_in_contribution += week.a
-                    self.total_lines_of_deletion_in_contribution += week.d
-        if not any([self.total_lines_of_addition_in_contribution, self.total_lines_of_deletion_in_contribution]):
-            raise NotContributedError('User have not contributed to this repository.')
-        
+        if (contributed_to.get_commits().totalCount >= 100):
+            execute_bind('<inform>', 'This repository has a lot of commits! This can take some time...')
+
         for commit in contributed_to.get_commits():
             if commit.author.id == user.id:
                 for file in commit.files:
-                    if file.filename in excepted_files:
-                        self.excepted_lines_of_addition_in_contribution += file.additions
-                        self.excepted_lines_of_deletion_in_contribution += file.deletions
+                    if file.filename in excepted_files or file.filename.startswith('node_modules/'):
+                        pass
+                    else:
+                        self.total_lines_of_addition_in_contribution += file.additions
+                        self.total_lines_of_addition_in_contribution += file.deletions
 
-        self.net_addition_in_contribution = self.total_lines_of_addition_in_contribution - self.excepted_lines_of_addition_in_contribution
-        self.net_deletion_in_contribution = self.total_lines_of_deletion_in_contribution - self.excepted_lines_of_deletion_in_contribution
+        if not any([self.total_lines_of_addition_in_contribution, self.total_lines_of_deletion_in_contribution]):
+            raise NotContributedError('User have not contributed to this repository.')
 
 
 class OwnedRepository:
     def __init__(self, owned_repository: Repository, user):
         self.total_lines_of_addition = 0
         self.total_lines_of_deletion = 0
-        self.excepted_lines_of_addition = 0
-        self.excepted_lines_of_deletion = 0
         self.name = owned_repository.name
-
-        for contribution in owned_repository.get_stats_contributors():
-            if contribution.author.id == user.id:
-                for week in contribution.weeks:
-                    self.total_lines_of_addition += week.a
-                    self.total_lines_of_deletion += week.d
 
         if (owned_repository.get_commits().totalCount >= 100):
             execute_bind('<inform>', 'This repository has a lot of commits! This can take some time...')
 
-        # Get all of the additions / deletions of the excepted files
         for commit in owned_repository.get_commits():
             if commit.author.id == user.id:
                 for file in commit.files:
-                    if file.filename in excepted_files:
-                        self.excepted_lines_of_addition += file.additions
-                        self.excepted_lines_of_deletion += file.deletions
+                    if file.filename in excepted_files or file.filename.startswith('node_modules/'):
+                        pass
+                    else:
+                        self.total_lines_of_addition += file.additions
+                        self.total_lines_of_deletion += file.deletions
 
+        if not any([self.total_lines_of_addition, self.total_lines_of_deletion]):
+            raise NotContributedError('There aren\'t any commits that match your ID,'
+                                      ' maybe you worked with other account or ID.')
 
-        # Define net addition and deletion, substracting the excluded lines from the total ones.
-        self.net_addition = self.total_lines_of_addition - self.excepted_lines_of_addition
-        self.net_deletion = self.total_lines_of_deletion - self.excepted_lines_of_deletion
 
 contributed_repos = []
 own_repos = []
@@ -144,8 +132,8 @@ def crawl(token: str, user_id=None):
                         contributed_repo = ContributedRepository(contributed_to=forked_from, user=user)
                         execute_bind(
                             '<inform>',
-                            f'Found {contributed_repo.net_addition_in_contribution} additions'
-                            f' and {contributed_repo.net_deletion_in_contribution} deletions.'
+                            f'Found {contributed_repo.total_lines_of_addition_in_contribution} additions'
+                            f' and {contributed_repo.total_lines_of_deletion_in_contribution} deletions.'
                         )
 
                         contributed_repos.append(contributed_repo)
@@ -163,8 +151,8 @@ def crawl(token: str, user_id=None):
                     own_repo = OwnedRepository(owned_repository=repo, user=user)
                     execute_bind(
                         '<inform>',
-                        f'Found {own_repo.net_addition} additions and'
-                        f' {own_repo.net_deletion} deletions in {own_repo.name}.'
+                        f'Found {own_repo.total_lines_of_addition} additions and'
+                        f' {own_repo.total_lines_of_deletion} deletions in {own_repo.name}.'
                     )
                     own_repos.append(own_repo)
                 except Exception as e:
@@ -196,8 +184,8 @@ def crawl(token: str, user_id=None):
                         contributed_repo = ContributedRepository(contributed_to=forked_from, user=user)
                         execute_bind(
                             '<inform>',
-                            f'Found {contributed_repo.net_addition_in_contribution} additions'
-                            f' and {contributed_repo.net_deletion_in_contribution} deletions.'
+                            f'Found {contributed_repo.total_lines_of_addition_in_contribution} additions'
+                            f' and {contributed_repo.total_lines_of_deletion_in_contribution} deletions.'
                         )
                         contributed_repos.append(contributed_repo)
 
@@ -213,8 +201,8 @@ def crawl(token: str, user_id=None):
                     own_repo = OwnedRepository(owned_repository=repo, user=user)
                     execute_bind(
                         '<inform>',
-                        f'Found {own_repo.net_addition} additions and '
-                        f'{own_repo.net_deletion} deletions in {own_repo.name}.'
+                        f'Found {own_repo.total_lines_of_addition} additions and '
+                        f'{own_repo.total_lines_of_deletion} deletions in {own_repo.name}.'
                     )
                     own_repos.append(own_repo)
                 except Exception as e:
