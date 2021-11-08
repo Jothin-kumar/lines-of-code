@@ -63,7 +63,7 @@ class ContributedRepository:
             if contribution.author.id == user.id:
                 for week in contribution.weeks:
                     self.total_lines_of_addition_in_contribution += week.a
-                    self.total_lines_of_deletion_in_contribution += week.dRepository
+                    self.total_lines_of_deletion_in_contribution += week.d
         if not any([self.total_lines_of_addition_in_contribution, self.total_lines_of_deletion_in_contribution]):
             raise NotContributedError('User have not contributed to this repository.')
         
