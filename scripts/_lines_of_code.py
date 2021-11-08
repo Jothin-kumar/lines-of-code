@@ -93,7 +93,7 @@ class OwnedRepository:
                     self.total_lines_of_deletion += week.d
 
         if (owned_repository.get_commits().totalCount >= 100):
-            print('This repository has a lot of commits! This can take some time...')
+            execute_bind('<inform>', 'This repository has a lot of commits! This can take some time...')
 
         # Get all of the additions / deletions of the excepted files
         for commit in owned_repository.get_commits():
