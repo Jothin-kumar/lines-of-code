@@ -63,9 +63,7 @@ class ContributedRepository:
         for commit in contributed_to.get_commits():
             if commit.author.id == user.id:
                 for file in commit.files:
-                    if file.filename in excepted_files or file.filename.startswith('node_modules/'):
-                        pass
-                    else:
+                    if not file.filename in excepted_files or file.filename.startswith('node_modules/'):
                         self.total_lines_of_addition_in_contribution += file.additions
                         self.total_lines_of_addition_in_contribution += file.deletions
 
