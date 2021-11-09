@@ -49,7 +49,8 @@ excepted_files = [
     'package.json',
     'package-lock.json',
     '.gitignore',
-    'yarn.lock'
+    'yarn.lock',
+    'LICENSE'
 ]
 class ContributedRepository:
     def __init__(self, contributed_to: Repository, user):
