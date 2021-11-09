@@ -64,9 +64,10 @@ class ContributedRepository:
             if commit.author is not None:
                 if commit.author.id == user.id:
                     for file in commit.files:
-                        if not file.filename in excepted_files or file.filename.startswith('node_modules/'):
-                            self.total_lines_of_addition_in_contribution += file.additions
-                            self.total_lines_of_addition_in_contribution += file.deletions
+                        if file.filename.startswith('node_modules') is False:
+                            if not file.filename in excepted_files:
+                                self.total_lines_of_addition_in_contribution += file.additions
+                                self.total_lines_of_deletion_in_contribution += file.deletions
 
         if not any([self.total_lines_of_addition_in_contribution, self.total_lines_of_deletion_in_contribution]):
             raise NotContributedError('User have not contributed to this repository.')
@@ -78,16 +79,17 @@ class OwnedRepository:
         self.total_lines_of_deletion = 0
         self.name = owned_repository.name
 
-        if (owned_repository.get_commits().totalCount >= 100):
+        if owned_repository.get_commits().totalCount >= 100:
             execute_bind('<inform>', 'This repository has a lot of commits! This can take some time...')
 
         for commit in owned_repository.get_commits():
             if commit.author is not None:
                 if commit.author.id == user.id:
                     for file in commit.files:
-                        if not file.filename in excepted_files or file.filename.startswith('node_modules/'):
-                            self.total_lines_of_addition += file.additions
-                            self.total_lines_of_deletion += file.deletions
+                        if file.filename.startswith('node_modules') is False:
+                            if not file.filename in excepted_files:
+                                self.total_lines_of_addition += file.additions
+                                self.total_lines_of_deletion += file.deletions
 
         if not any([self.total_lines_of_addition, self.total_lines_of_deletion]):
             raise NotContributedError('There aren\'t any commits that match your ID,'
