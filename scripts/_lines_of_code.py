@@ -64,7 +64,7 @@ class ContributedRepository:
             if commit.author is not None:
                 if commit.author.id == user.id:
                     for file in commit.files:
-                        if file.filename.startswith('node_modules') is False:
+                        if not file.filename.startswith('node_modules'):
                             if not file.filename in excepted_files:
                                 self.total_lines_of_addition_in_contribution += file.additions
                                 self.total_lines_of_deletion_in_contribution += file.deletions
@@ -86,7 +86,7 @@ class OwnedRepository:
             if commit.author is not None:
                 if commit.author.id == user.id:
                     for file in commit.files:
-                        if file.filename.startswith('node_modules') is False:
+                        if not file.filename.startswith('node_modules'):
                             if not file.filename in excepted_files:
                                 self.total_lines_of_addition += file.additions
                                 self.total_lines_of_deletion += file.deletions
