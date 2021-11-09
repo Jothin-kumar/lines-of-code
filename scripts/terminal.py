@@ -21,13 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import _lines_of_code
+from github import Github
 
 
 token = input('Please enter you token: ')
-user_id = input('Please enter an user id (Leave blank to scan your own account): ')
-if user_id:
-    user_id = int(user_id)
+user_name = input('Input a Github user\'s name (or leave it blank for your own account): ')
+if user_name:
+    user_id = Github(token).get_user(user_name).id
+else:
+    user_id = None
+
 _lines_of_code.bind('<inform>', print)
 _lines_of_code.bind('<report error>', print)
 _lines_of_code.crawl(
@@ -38,6 +43,7 @@ print('Results')
 print('Lines in own repos')
 total_lines_added_in_own_repos = 0
 total_lines_deleted_in_own_repos = 0
+
 for own_repo in _lines_of_code.own_repos:
     total_lines_added_in_own_repos += own_repo.total_lines_of_addition
     total_lines_deleted_in_own_repos += own_repo.total_lines_of_deletion
@@ -49,6 +55,7 @@ for own_repo in _lines_of_code.own_repos:
 print('Lines in other repos')
 total_lines_added_in_other_repos = 0
 total_lines_deleted_in_other_repos = 0
+
 for contributed_repo in _lines_of_code.contributed_repos:
     total_lines_added_in_other_repos += contributed_repo.total_lines_of_addition_in_contribution
     total_lines_deleted_in_other_repos += contributed_repo.total_lines_of_deletion_in_contribution
@@ -57,6 +64,7 @@ for contributed_repo in _lines_of_code.contributed_repos:
     print('Addition:', contributed_repo.total_lines_of_addition_in_contribution)
     print('Deletion:', contributed_repo.total_lines_of_deletion_in_contribution)
     print('-'*15)
+
 print('Total lines added in repos with write access (Owned repos or collaborated repos):', total_lines_added_in_own_repos)
 print('Total lines deleted in repos with write access (Owned repos or collaborated repos):', total_lines_deleted_in_own_repos)
 print('Total lines added in other repos (PRs):', total_lines_added_in_other_repos)
