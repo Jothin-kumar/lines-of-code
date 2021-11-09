@@ -61,11 +61,12 @@ class ContributedRepository:
             execute_bind('<inform>', 'This repository has a lot of commits! This can take some time...')
 
         for commit in contributed_to.get_commits():
-            if commit.author.id == user.id:
-                for file in commit.files:
-                    if not file.filename in excepted_files or file.filename.startswith('node_modules/'):
-                        self.total_lines_of_addition_in_contribution += file.additions
-                        self.total_lines_of_addition_in_contribution += file.deletions
+            if commit.author is not None:
+                if commit.author.id == user.id:
+                    for file in commit.files:
+                        if not file.filename in excepted_files or file.filename.startswith('node_modules/'):
+                            self.total_lines_of_addition_in_contribution += file.additions
+                            self.total_lines_of_addition_in_contribution += file.deletions
 
         if not any([self.total_lines_of_addition_in_contribution, self.total_lines_of_deletion_in_contribution]):
             raise NotContributedError('User have not contributed to this repository.')
