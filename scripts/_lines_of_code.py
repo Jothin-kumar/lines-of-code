@@ -82,7 +82,7 @@ class OwnedRepository:
             execute_bind('<inform>', 'This repository has a lot of commits! This can take some time...')
 
         for commit in owned_repository.get_commits():
-        if commit.author is not None:
+            if commit.author is not None:
                 if commit.author.id == user.id:
                     for file in commit.files:
                         if not file.filename in excepted_files or file.filename.startswith('node_modules/'):
