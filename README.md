@@ -3,7 +3,9 @@
 To calculate the total number of lines you (or your friend) have written,
  - Clone this repo using ```git clone https://github.com/Jothin-kumar/lines-of-code.git```.
  - Generate a token from [https://github.com/settings/tokens](https://github.com/settings/tokens).
- - navigate to lines-of-code/scripts using ```cd "lines-of-code/scripts"```.
+ - navigate to lines-of-code using ```cd "lines-of-code"```.
+ - run ```pip install -r requirements.txt```
+ - navigate to scripts using ```cd scripts```
  - run terminal.py using ```python terminal.py``` in windows or ```python3 terminal.py``` in ubuntu.
  - Enter the token generated in step 2.
  - Enter user id to claculate your friend's total lines of code or leave it blank to calculate your total lines of code. To find a person's user id, follow the steps [here](#how-to-find-a-persons-user-id).
