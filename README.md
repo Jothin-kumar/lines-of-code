@@ -8,10 +8,6 @@ To calculate the total number of lines you (or your friend) have written,
  - navigate to scripts using ```cd scripts```
  - run terminal.py using ```python terminal.py``` in windows or ```python3 terminal.py``` in ubuntu.
  - Enter the token generated in step 2.
- - Enter user id to claculate your friend's total lines of code or leave it blank to calculate your total lines of code. To find a person's user id, follow the steps [here](#how-to-find-a-persons-user-id).
+ - Enter username to claculate your friend's total lines of code or leave it blank to calculate your total lines of code
  - Wait for it to complete calculating.
  - Done!
-## How to find a person's user id
-To find a person's user id,
- - Navigate to ```https://api.github.com/users/<username>```. Example: [```https://api.github.com/users/Jothin-kumar```](https://api.github.com/users/Jothin-kumar)
- - The user id can be found in the "id" parameter. Example: 84167612.
