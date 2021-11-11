@@ -1,5 +1,5 @@
 # [Lines of code](https://jothin-kumar.github.io/lines-of-code/) - [B. Jothin kumar](https://jothin-kumar.github.io/)
-![Visitors count](https://visitor-badge.glitch.me/badge?page_id=Jothin-kumar.lines-of-code)
+![Visitors count](https://visitor-badge.glitch.me/badge?page_id=Jothin-kumar.lines-of-code)  
 **Have you ever wondered how many lines of code you wrote in github?** This tool will calculate it for you!
 To calculate the total number of lines you (or your friend) have written,
  - Clone this repo using ```git clone https://github.com/Jothin-kumar/lines-of-code.git```.
