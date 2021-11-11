@@ -12,3 +12,7 @@ To calculate the total number of lines you (or your friend) have written,
  - Enter username to claculate your friend's total lines of code or leave it blank to calculate your total lines of code
  - Wait for it to complete calculating.
  - Done!
+
+## My other interesting projects:
+ - https://github.com/Jothin-kumar/Geometry-app/
+ - https://github.com/Jothin-kumar/time-widget
