@@ -42,11 +42,24 @@ def end():
 
 
 class Repository:
-    def __init__(self, git_clone_url):
+    def __init__(self, git_clone_url, emails):
         self.git_clone_url = git_clone_url
         self.id = sha256(git_clone_url.encode()).hexdigest()
-        Thread(target=self.clone_and_get_log).start()
+        self.emails = emails
+        Thread(target=self.analyse).start()
 
     def clone_and_get_log(self):
         system(f'cd repos && git clone --bare {self.git_clone_url} {self.id}')
-        system('cd repos/' + self.id + " && git log --pretty=format:'%H, %an, %ae' > logs.txt")
+        system('cd repos/' + self.id + " && git log --pretty=format:'%H%ae' > logs.txt")
+
+    def analyse(self):
+        self.clone_and_get_log()
+        commit_hashes = []
+        with open("repos/" + self.id + "/logs.txt") as f:
+            lines = f.readlines()
+            for line in lines:
+                line = line.strip('\n')
+                email = line[40:]
+                commit_hash = line[:40]
+                if email in self.emails:
+                    commit_hashes.append(commit_hash)
