@@ -28,9 +28,17 @@ from os import system, mkdir
 from os.path import exists
 from hashlib import sha256
 from threading import Thread
+from shutil import rmtree
 
-if not exists('repos'):
-    mkdir('repos')
+
+def start():
+    if exists("results"):
+        rmtree("results")
+    mkdir("results")
+
+
+def end():
+    rmtree("results")
 
 
 class Repository:
