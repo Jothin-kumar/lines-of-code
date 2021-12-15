@@ -32,13 +32,13 @@ from shutil import rmtree
 
 
 def start():
-    if exists("results"):
-        rmtree("results")
-    mkdir("results")
+    if exists("repos"):
+        rmtree("repos")
+    mkdir("repos")
 
 
 def end():
-    rmtree("results")
+    rmtree("repos")
 
 
 class Repository:
