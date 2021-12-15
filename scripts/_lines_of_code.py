@@ -27,6 +27,7 @@ Github repository of this project: https://github.com/Jothin-kumar/lines-of-code
 from os import system, mkdir
 from os.path import exists
 from hashlib import sha256
+from threading import Thread
 
 if not exists('repos'):
     mkdir('repos')
@@ -36,6 +37,7 @@ class Repository:
     def __init__(self, git_clone_url):
         self.git_clone_url = git_clone_url
         self.id = sha256(git_clone_url.encode()).hexdigest()
+        Thread(target=self.clone_and_get_log).start()
 
     def clone_and_get_log(self):
         system(f'cd repos && git clone --bare {self.git_clone_url} {self.id} > logs.txt')
