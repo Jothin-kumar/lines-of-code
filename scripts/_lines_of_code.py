@@ -41,11 +41,48 @@ def end():
     rmtree("repos")
 
 
+class Commit:
+    def __init__(self, commit_hash, repo_clone_url_hash):
+        self.additions = 0
+        self.deletions = 0
+        if not exists("repos/" + repo_clone_url_hash + "/commit_logs"):
+            mkdir("repos/" + repo_clone_url_hash + "/commit_logs")
+        system('git show --stat --oneline ' + commit_hash + ' > repos/' + repo_clone_url_hash + '/commit_logs/' + commit_hash + '.txt')
+        with open('repos/' + repo_clone_url_hash + '/commit_logs/' + commit_hash + '.txt') as f:
+            commit_log = f.readlines()
+            del commit_log[0]
+            del commit_log[-1]
+            for log in commit_log:
+                plus_minus = list(log.split(' ')[-1].strip())
+                contains_only_plus_minus = True
+                for char in plus_minus:
+                    if not char in ['+', '-']:
+                        contains_only_plus_minus = False
+                        break
+                if contains_only_plus_minus:
+                    try:
+                        while plus_minus[0] == '+':
+                            self.additions += 1
+                            del plus_minus[0]
+                    except IndexError:
+                        pass
+                    try:
+                        while plus_minus[0] == '-':
+                            self.deletions += 1
+                            del plus_minus[0]
+                    except IndexError:
+                        pass
+
+
 class Repository:
     def __init__(self, git_clone_url, emails):
         self.git_clone_url = git_clone_url
         self.id = sha256(git_clone_url.encode()).hexdigest()
         self.emails = emails
+        self.commits = []
+        self.additions = 0
+        self.deletions = 0
+
         Thread(target=self.analyse).start()
 
     def clone_and_get_log(self):
@@ -54,7 +91,6 @@ class Repository:
 
     def analyse(self):
         self.clone_and_get_log()
-        commit_hashes = []
         with open("repos/" + self.id + "/logs.txt") as f:
             lines = f.readlines()
             for line in lines:
@@ -62,4 +98,11 @@ class Repository:
                 email = line[40:]
                 commit_hash = line[:40]
                 if email in self.emails:
-                    commit_hashes.append(commit_hash)
+                    self.commits.append(Commit(commit_hash, self.id))
+        for commit in self.commits:
+            self.additions += commit.additions
+            self.deletions += commit.deletions
+
+
+start()
+a = Repository('https://github.com/Jothin-kumar/lines-of-code', ['bjothinphysics@gmail.com'])
