@@ -37,7 +37,7 @@ def start():
     mkdir("repos")
 
 
-def end():
+def clear_repos():
     rmtree("repos")
 
 
