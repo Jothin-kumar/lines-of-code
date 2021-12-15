@@ -40,5 +40,5 @@ class Repository:
         Thread(target=self.clone_and_get_log).start()
 
     def clone_and_get_log(self):
-        system(f'cd repos && git clone --bare {self.git_clone_url} {self.id} > logs.txt')
+        system(f'cd repos && git clone --bare {self.git_clone_url} {self.id}')
         system('cd repos/' + self.id + " && git log --pretty=format:'%H, %an, %ae' > logs.txt")
