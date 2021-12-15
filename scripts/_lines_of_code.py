@@ -39,4 +39,4 @@ class Repository:
 
     def clone_and_get_log(self):
         system(f'cd repos && git clone --bare {self.git_clone_url} {self.id} > logs.txt')
-        system(f'cd repos/{self.id} && git log --pretty=format:\'\{"hash": "%H", "author": "%an", "email": "%ae"\}\' > logs.txt')
+        system('cd repos/' + self.id + " && git log --pretty=format:'%H, %an, %ae' > logs.txt")
