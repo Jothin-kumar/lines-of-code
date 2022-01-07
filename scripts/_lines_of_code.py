@@ -29,6 +29,7 @@ from os.path import exists
 from hashlib import sha256
 from threading import Thread
 from shutil import rmtree
+from time import sleep
 
 
 def start():
@@ -45,18 +46,21 @@ class Commit:
     def __init__(self, commit_hash, repo_clone_url_hash):
         self.additions = 0
         self.deletions = 0
+        self.commit_hash = commit_hash
         if not exists("repos/" + repo_clone_url_hash + "/commit_logs"):
             mkdir("repos/" + repo_clone_url_hash + "/commit_logs")
-        system('git show --stat --oneline ' + commit_hash + ' > repos/' + repo_clone_url_hash + '/commit_logs/' + commit_hash + '.txt')
+        system('cd repos/' + repo_clone_url_hash + ' && git show --stat --oneline ' + commit_hash + ' >> commit_logs/' + commit_hash + '.txt')
         with open('repos/' + repo_clone_url_hash + '/commit_logs/' + commit_hash + '.txt') as f:
             commit_log = f.readlines()
             del commit_log[0]
             del commit_log[-1]
+            print(commit_hash)
             for log in commit_log:
                 plus_minus = list(log.split(' ')[-1].strip())
+                print(log, ''.join(plus_minus), len(plus_minus))
                 contains_only_plus_minus = True
                 for char in plus_minus:
-                    if not char in ['+', '-']:
+                    if char not in ['+', '-']:
                         contains_only_plus_minus = False
                         break
                 if contains_only_plus_minus:
@@ -82,6 +86,7 @@ class Repository:
         self.commits = []
         self.additions = 0
         self.deletions = 0
+        self.status = 'analyzing'
 
         Thread(target=self.analyse).start()
 
@@ -98,11 +103,20 @@ class Repository:
                 email = line[40:]
                 commit_hash = line[:40]
                 if email in self.emails:
-                    self.commits.append(Commit(commit_hash, self.id))
+                    try:
+                        self.commits.append(Commit(commit_hash, self.id))
+                    except IndexError:
+                        pass
         for commit in self.commits:
             self.additions += commit.additions
             self.deletions += commit.deletions
+        self.status = 'analyzed'
 
 
 start()
-a = Repository('https://github.com/Jothin-kumar/lines-of-code', ['bjothinphysics@gmail.com'])
+a = Repository('https://github.com/Jothin-kumar/time-widget.git', ['bjothinphysics@gmail.com', 'contact@jothin.tech'])
+while True:
+    if a.status == 'analyzed':
+        print(a.additions, a.deletions, a.git_clone_url)
+        break
+    sleep(1)
