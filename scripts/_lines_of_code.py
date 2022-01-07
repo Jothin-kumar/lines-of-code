@@ -29,10 +29,9 @@ from os.path import exists
 from hashlib import sha256
 from threading import Thread
 from shutil import rmtree
-from time import sleep
 
 
-def start():
+def init():
     if exists("repos"):
         rmtree("repos")
     mkdir("repos")
@@ -102,14 +101,3 @@ class Repository:
             self.additions += commit.additions
             self.deletions += commit.deletions
         self.status = 'analyzed'
-
-
-start()
-a = Repository('https://github.com/Jothin-kumar/time-widget.git', ['bjothinphysics@gmail.com', 'contact@jothin.tech'])
-while True:
-    if a.status == 'analyzed':
-        print(a.additions, a.deletions, a.git_clone_url)
-        for commit in a.commits:
-            print(commit.commit_hash, commit.additions, commit.deletions)
-        break
-    sleep(1)
