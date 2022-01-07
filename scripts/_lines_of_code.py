@@ -49,33 +49,24 @@ class Commit:
         self.commit_hash = commit_hash
         if not exists("repos/" + repo_clone_url_hash + "/commit_logs"):
             mkdir("repos/" + repo_clone_url_hash + "/commit_logs")
-        system('cd repos/' + repo_clone_url_hash + ' && git show --stat --oneline ' + commit_hash + ' >> commit_logs/' + commit_hash + '.txt')
+        system(
+            'cd repos/' + repo_clone_url_hash + ' && git show --stat --oneline ' + commit_hash + ' >> commit_logs/' + commit_hash + '.txt')
         with open('repos/' + repo_clone_url_hash + '/commit_logs/' + commit_hash + '.txt') as f:
             commit_log = f.readlines()
-            del commit_log[0]
-            del commit_log[-1]
-            print(commit_hash)
-            for log in commit_log:
-                plus_minus = list(log.split(' ')[-1].strip())
-                print(log, ''.join(plus_minus), len(plus_minus))
-                contains_only_plus_minus = True
-                for char in plus_minus:
-                    if char not in ['+', '-']:
-                        contains_only_plus_minus = False
-                        break
-                if contains_only_plus_minus:
-                    try:
-                        while plus_minus[0] == '+':
-                            self.additions += 1
-                            del plus_minus[0]
-                    except IndexError:
-                        pass
-                    try:
-                        while plus_minus[0] == '-':
-                            self.deletions += 1
-                            del plus_minus[0]
-                    except IndexError:
-                        pass
+            msg = commit_log[-1]
+            words = msg.split(',')
+            for word in words:
+                word = word.strip()
+                number = ''
+                while word[0].isdigit():
+                    number += word[0]
+                    word = word[1:]
+                word = word.strip()
+                number = int(number)
+                if word.startswith('insertion'):
+                    self.additions += number
+                elif word.startswith('deletion'):
+                    self.deletions += number
 
 
 class Repository:
@@ -118,5 +109,7 @@ a = Repository('https://github.com/Jothin-kumar/time-widget.git', ['bjothinphysi
 while True:
     if a.status == 'analyzed':
         print(a.additions, a.deletions, a.git_clone_url)
+        for commit in a.commits:
+            print(commit.commit_hash, commit.additions, commit.deletions)
         break
     sleep(1)
