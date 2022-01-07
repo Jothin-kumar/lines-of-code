@@ -24,45 +24,69 @@ SOFTWARE.
 Author: Jothin kumar (https://jothin-kumar.github.io/)
 Github repository of this project: https://github.com/Jothin-kumar/lines-of-code
 """
-import _lines_of_code
+from _lines_of_code import Repository, init, clear_repos
+from _github_repos import set_token, get_all_repos_of_user
+from time import sleep
 
+init()
+print('--------------------Welcome--------------------')
+git_clone_urls = []
+emails = input('Please enter your email(s) that you use for git commits. If you use more than one email, separate them with a space: ').split(' ')
+if emails == ['']:
+    print('Minimum one email is required. :(')
+    print('Exiting...')
+    exit()
+print('')
 
-token = input('Please enter you token: ')
-user_id = input('Please enter an user id (Leave blank to scan your own account): ')
-if user_id:
-    user_id = int(user_id)
-_lines_of_code.bind('<inform>', print)
-_lines_of_code.bind('<report error>', print)
-_lines_of_code.crawl(
-    token=token,
-    user_id=user_id
-)
-print('Results')
-print('Lines in own repos')
-total_lines_added_in_own_repos = 0
-total_lines_deleted_in_own_repos = 0
-for own_repo in _lines_of_code.own_repos:
-    total_lines_added_in_own_repos += own_repo.total_lines_of_addition
-    total_lines_deleted_in_own_repos += own_repo.total_lines_of_deletion
-    print('*'*15)
-    print('Name:', own_repo.name)
-    print('Addition:', own_repo.total_lines_of_addition)
-    print('Deletion:', own_repo.total_lines_of_deletion)
-    print('-'*15)
-print('Lines in other repos')
-total_lines_added_in_other_repos = 0
-total_lines_deleted_in_other_repos = 0
-for contributed_repo in _lines_of_code.contributed_repos:
-    total_lines_added_in_other_repos += contributed_repo.total_lines_of_addition_in_contribution
-    total_lines_deleted_in_other_repos += contributed_repo.total_lines_of_deletion_in_contribution
-    print('*'*15)
-    print('Name:', contributed_repo.name)
-    print('Addition:', contributed_repo.total_lines_of_addition_in_contribution)
-    print('Deletion:', contributed_repo.total_lines_of_deletion_in_contribution)
-    print('-'*15)
-print('Total lines added in repos with write access (Owned repos or collaborated repos):', total_lines_added_in_own_repos)
-print('Total lines deleted in repos with write access (Owned repos or collaborated repos):', total_lines_deleted_in_own_repos)
-print('Total lines added in other repos (PRs):', total_lines_added_in_other_repos)
-print('Total lines deleted in other repos (PRs):', total_lines_deleted_in_other_repos)
-print('Total lines added:', total_lines_added_in_own_repos + total_lines_added_in_other_repos)
-print('Total lines deleted:', total_lines_deleted_in_own_repos + total_lines_deleted_in_other_repos)
+GitHub_username = input('Please enter your GitHub username (optional): ')
+if GitHub_username:
+    GitHub_token = input('Please enter your GitHub API token (optional): ')
+    if GitHub_token:
+        set_token(GitHub_token)
+    print('Fetching GitHub repositories...')
+    git_clone_urls = get_all_repos_of_user(GitHub_username)
+    print(f'Fetched {len(git_clone_urls)} repositories.')
+print('')
+
+git_clone_urls += input('Please enter git clone url(s) seperated by space (optional): ').split(' ')
+print('')
+
+git_clone_urls_ = []
+for git_clone_url in git_clone_urls:
+    if git_clone_url:
+        git_clone_urls_.append(git_clone_url)
+git_clone_urls = git_clone_urls_
+
+if not git_clone_urls:
+    print('No repositories to scan :(')
+    print('Exiting...')
+    exit()
+repos = []
+total_additions = 0
+total_deletions = 0
+for url in git_clone_urls:
+    repos.append(Repository(url, emails))
+print('Analyzing...', end='\n\n')
+not_analyzed_repos = repos
+while not_analyzed_repos:
+    for repo in not_analyzed_repos:
+        if repo.status == 'analyzed':
+            total_additions += repo.additions
+            total_deletions += repo.deletions
+            print(
+                f"""Repository: {repo.git_clone_url}
+total commits: {len(repo.commits)}
+Total lines added in commits: {repo.additions}
+Total lines deleted in commits: {repo.deletions}
+""")
+            not_analyzed_repos.remove(repo)
+    sleep(0.1)
+print(f'Total lines added: {total_additions}')
+print(f'Total lines deleted: {total_deletions}', end='\n\n')
+
+print('Purging repositories...', end='\n\n')
+clear_repos()
+
+print('If you like this tool, kindly leave a star at https://github.com/Jothin-kumar/lines-of-code :-).')
+print('Thank you!')
+print('GUI version coming soon...')
