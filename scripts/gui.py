@@ -224,17 +224,17 @@ user_and_email_selectors.grid(row=0, column=0, padx=5, pady=2)
 repo_selector = tk.Listbox(main_frame, height=30, width=50)
 
 
+def get_repo_by_url(url):
+    for repo in repos:
+        if repo.git_clone_url == url:
+            return repo
+
+
 def on_repo_select(evt):
     try:
         w = evt.widget
         index = int(w.curselection()[0])
         value = w.get(index)
-
-        def get_repo_by_url(url):
-            for repo in repos:
-                if repo.git_clone_url == url:
-                    return repo
-
         global selected_repo
         selected_repo = get_repo_by_url(value)
     except IndexError:
@@ -288,6 +288,22 @@ def refresh_result_viewer():
             overall_commits_label.config(text=f'Total commits: {overall_commits}')
             overall_lines_added_label.config(text=f'Additions: {overall_additions}')
             overall_lines_deleted_label.config(text=f'Deletions: {overall_deletions}')
+
+            def get_index(url):
+                count = 0
+                for repo_ in repos:
+                    if repo_.git_clone_url == url:
+                        return count
+                    count += 1
+
+            for repo_url in repo_urls:
+                repo = get_repo_by_url(repo_url)
+                if repo.status == 'Successfully analyzed':
+                    repo_selector.itemconfig(get_index(repo_url), {'bg': 'green', 'fg': 'white'})
+                elif repo.status == 'Analyzing':
+                    repo_selector.itemconfig(get_index(repo_url), {'bg': 'yellow', 'fg': 'black'})
+                elif repo.status == 'Not analyzed':
+                    repo_selector.itemconfig(get_index(repo_url), {'bg': 'red', 'fg': 'black'})
             sleep(0.1)
     except RuntimeError:
         pass
