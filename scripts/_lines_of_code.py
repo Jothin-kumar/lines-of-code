@@ -81,7 +81,8 @@ class Repository:
         Thread(target=self.analyse).start()
 
     def clone_and_get_log(self):
-        system(f'cd repos && git clone --bare {self.git_clone_url} {self.id}')
+        if not exists("repos/" + self.id):
+            system(f'cd repos && git clone --bare {self.git_clone_url} {self.id}')
         system('cd repos/' + self.id + " && git log --pretty=format:'%H%ae' > logs.txt")
 
     def analyse(self):
