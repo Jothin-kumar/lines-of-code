@@ -250,7 +250,7 @@ total_lines_added = tk.Label(result_viewer, bg='lightgrey')
 total_lines_added.pack(side=tk.TOP, fill=tk.X)
 total_lines_deleted = tk.Label(result_viewer, bg='lightgrey')
 total_lines_deleted.pack(side=tk.TOP, fill=tk.X)
-overall_stats = tk.Label(result_viewer, bg='lightgrey')
+overall_stats = tk.Label(result_viewer, bg='lightgrey', font=('Ariel', 12))
 overall_stats.pack(side=tk.BOTTOM, fill=tk.X)
 result_viewer.grid(row=0, column=2, padx=5, pady=2, sticky=tk.NSEW)
 
@@ -263,9 +263,9 @@ def refresh_result_viewer():
                 total_commits.config(text=f'Total commits: {len(selected_repo.commits)}')
                 total_lines_added.config(text=f'Additions: {selected_repo.additions}')
                 total_lines_deleted.config(text=f'Deletions: {selected_repo.deletions}')
-                overall_stats.config(text=f'Total additions: {overall_additions}'
-                                          f'\nTotal deletions: {overall_deletions}'
-                                          f'\nTotal commits: {overall_commits}')
+            overall_stats.config(text=f'Total additions: {overall_additions}\n'
+                                      f'Total deletions: {overall_deletions}\n'
+                                      f'Total commits: {overall_commits}')
             sleep(0.1)
     except RuntimeError:
         pass
