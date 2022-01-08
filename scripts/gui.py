@@ -39,6 +39,7 @@ email_list = []
 repo_urls = []
 repos = []
 total_threads = 0
+max_threads = 10
 init()
 
 
@@ -97,7 +98,7 @@ def auto_analyze_repos():
     try:
         while True:
             for repo in repos:
-                if repo.status == 'Not analyzed' and total_threads < 10:
+                if repo.status == 'Not analyzed' and total_threads < max_threads:
                     Thread(target=repo.analyse).start()
                     total_threads += 1
                 elif repo.status == 'Analyzed':
@@ -125,7 +126,16 @@ add_email_button = tk.Button(top_frame, text="Add an Email", command=add_email)
 add_email_button.grid(row=0, column=1, padx=3)
 add_repo_button = tk.Button(top_frame, text="Add a Repository", command=add_repo_url)
 add_repo_button.grid(row=0, column=2, padx=3)
-max_thread_button = tk.Button(top_frame, text="Max Threads: 10")
+
+
+def change_max_threads():
+    new_max_threads = simpledialog.askinteger('Change max threads', 'Enter the new max threads:')
+    global max_threads
+    max_threads = new_max_threads
+    max_thread_button.config(text=f'Max threads: {max_threads}')
+
+
+max_thread_button = tk.Button(top_frame, text="Max Threads: 10", command=change_max_threads)
 max_thread_button.grid(row=0, column=3, padx=3)
 purge_button = tk.Button(top_frame, text="Purge repositories", command=purge_repos)
 purge_button.grid(row=0, column=4, padx=3)
