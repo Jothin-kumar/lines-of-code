@@ -29,6 +29,7 @@ from tkinter import simpledialog, messagebox
 from requests import get
 
 users_or_orgs = []
+email_list = []
 
 
 def add_user_or_org():
@@ -46,13 +47,22 @@ def add_user_or_org():
             messagebox.showerror('An error occurred', f'{users_or_org} is not a valid GitHub user or organization.')
 
 
+def add_email():
+    email = simpledialog.askstring('Add Email', 'Enter an email:')
+    if email in email_list:
+        messagebox.showwarning('Already exists', 'Email already added!')
+    else:
+        email_list.append(email)
+        refresh_emails()
+
+
 root = tk.Tk()
 root.title("Lines of Code - Jothin Kumar")
 root.resizable(False, False)
 top_frame = tk.Frame(root)
 add_GitHub_user_or_org_button = tk.Button(top_frame, text="Add a GitHub user / organisation", command=add_user_or_org)
 add_GitHub_user_or_org_button.grid(row=0, column=0, padx=3)
-add_email_button = tk.Button(top_frame, text="Add an Email")
+add_email_button = tk.Button(top_frame, text="Add an Email", command=add_email)
 add_email_button.grid(row=0, column=1, padx=3)
 add_repo_button = tk.Button(top_frame, text="Add a Repository")
 add_repo_button.grid(row=0, column=2, padx=3)
@@ -76,6 +86,14 @@ def refresh_usernames_and_orgs():
 
 emails = tk.Listbox(user_and_email_selectors, height=15)
 emails.pack(side=tk.TOP)
+
+
+def refresh_emails():
+    emails.delete(0, tk.END)
+    for email in email_list:
+        emails.insert(tk.END, email)
+
+
 user_and_email_selectors.grid(row=0, column=0, padx=5, pady=2)
 
 repo_selector = tk.Listbox(main_frame, height=30, width=50)
