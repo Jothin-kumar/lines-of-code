@@ -87,9 +87,12 @@ def add_repo_url():
 
 
 def purge_repos():
-    clear_repos()
-    mkdir('repos')
-    messagebox.showinfo('Success', 'All repositories have been successfully cleared.')
+    if total_threads == 0:
+        clear_repos()
+        mkdir('repos')
+        messagebox.showinfo('Success', 'All repositories have been successfully cleared.')
+    else:
+        messagebox.showwarning('Cannot purge repositories', 'Repositories can be cleared only when all threads are finished.')
 
 
 def auto_analyze_repos():
