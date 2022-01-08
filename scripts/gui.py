@@ -48,6 +48,15 @@ overall_commits = 0
 init()
 
 
+def add_repos_from_GitHub_user_or_org(user_or_org):
+    for repo in get_all_repos_of_user(user_or_org):
+        if repo not in repo_urls:
+            repo_urls.append(repo)
+            repos.append(Repository(repo, emails=email_list, auto_analyze=False))
+            refresh_repo_urls()
+            sleep(0.01)
+
+
 def add_user_or_org():
     users_or_org = simpledialog.askstring('Add a GitHub user or an organization',
                                           'Enter a GitHub username or an organization:')
@@ -64,11 +73,7 @@ def add_user_or_org():
                 request.json()['login']
                 users_or_orgs.append(users_or_org)
                 refresh_usernames_and_orgs()
-                for repo in get_all_repos_of_user(users_or_org):
-                    if repo not in repo_urls:
-                        repo_urls.append(repo)
-                        repos.append(Repository(repo, emails=email_list, auto_analyze=False))
-                        refresh_repo_urls()
+                Thread(target=add_repos_from_GitHub_user_or_org, args=(users_or_org,)).start()
             except KeyError:
                 messagebox.showerror('An error occurred', f'{users_or_org} is not a valid GitHub user or organization.')
 
@@ -298,12 +303,15 @@ def refresh_result_viewer():
 
             for repo_url in repo_urls:
                 repo = get_repo_by_url(repo_url)
-                if repo.status == 'Successfully analyzed':
-                    repo_selector.itemconfig(get_index(repo_url), {'bg': 'green', 'fg': 'white'})
-                elif repo.status == 'Analyzing':
-                    repo_selector.itemconfig(get_index(repo_url), {'bg': 'yellow', 'fg': 'black'})
-                elif repo.status == 'Not analyzed':
-                    repo_selector.itemconfig(get_index(repo_url), {'bg': 'red', 'fg': 'black'})
+                try:
+                    if repo.status == 'Successfully analyzed':
+                        repo_selector.itemconfig(get_index(repo_url), {'bg': 'green', 'fg': 'white'})
+                    elif repo.status == 'Analyzing':
+                        repo_selector.itemconfig(get_index(repo_url), {'bg': 'yellow', 'fg': 'black'})
+                    elif repo.status == 'Not analyzed':
+                        repo_selector.itemconfig(get_index(repo_url), {'bg': 'red', 'fg': 'black'})
+                except:
+                    pass
             sleep(0.1)
     except RuntimeError:
         pass
