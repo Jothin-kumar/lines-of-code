@@ -30,6 +30,7 @@ from requests import get
 
 users_or_orgs = []
 email_list = []
+repo_urls = []
 
 
 def add_user_or_org():
@@ -56,6 +57,19 @@ def add_email():
         refresh_emails()
 
 
+def add_repo_url():
+    repo_url = simpledialog.askstring('Add git repository URL', 'Enter a git repository URL:')
+    if repo_url in repo_urls:
+        messagebox.showwarning('Already exists', 'Repo URL already added!')
+    else:
+        try:
+            get(repo_url)
+            repo_urls.append(repo_url)
+        except:
+            messagebox.showerror('An error occurred', f'{repo_url} is likely not a valid git repository URL.')
+        refresh_repo_urls()
+
+
 root = tk.Tk()
 root.title("Lines of Code - Jothin Kumar")
 root.resizable(False, False)
@@ -64,7 +78,7 @@ add_GitHub_user_or_org_button = tk.Button(top_frame, text="Add a GitHub user / o
 add_GitHub_user_or_org_button.grid(row=0, column=0, padx=3)
 add_email_button = tk.Button(top_frame, text="Add an Email", command=add_email)
 add_email_button.grid(row=0, column=1, padx=3)
-add_repo_button = tk.Button(top_frame, text="Add a Repository")
+add_repo_button = tk.Button(top_frame, text="Add a Repository", command=add_repo_url)
 add_repo_button.grid(row=0, column=2, padx=3)
 max_thread_button = tk.Button(top_frame, text="Max Threads: 10")
 max_thread_button.grid(row=0, column=3, padx=3)
@@ -98,6 +112,13 @@ user_and_email_selectors.grid(row=0, column=0, padx=5, pady=2)
 
 repo_selector = tk.Listbox(main_frame, height=30, width=50)
 repo_selector.grid(row=0, column=1, padx=5, pady=2)
+
+
+def refresh_repo_urls():
+    repo_selector.delete(0, tk.END)
+    for repo_url in repo_urls:
+        repo_selector.insert(tk.END, repo_url)
+
 
 result_viewer = tk.Frame(main_frame, bg='lightgrey')
 status_label = tk.Label(result_viewer, text="Status", bg='lightgrey')
