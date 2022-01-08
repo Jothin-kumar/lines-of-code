@@ -35,12 +35,15 @@ def add_users_or_org():
     users_or_org = simpledialog.askstring('Add a GitHub user or an organization',
                                           'Enter a GitHub username or an organization:')
     request = get(f'https://api.github.com/users/{users_or_org}')
-    try:
-        request.json()['login']
-        users_or_orgs.append(users_or_org)
-        refresh_usernames_and_orgs()
-    except KeyError:
-        messagebox.showerror('An error occurred', f'{users_or_org} is not a valid GitHub user or organization.')
+    if users_or_org in users_or_orgs:
+        messagebox.showwarning('Already exists', 'User/organisation already added!')
+    else:
+        try:
+            request.json()['login']
+            users_or_orgs.append(users_or_org)
+            refresh_usernames_and_orgs()
+        except KeyError:
+            messagebox.showerror('An error occurred', f'{users_or_org} is not a valid GitHub user or organization.')
 
 
 root = tk.Tk()
