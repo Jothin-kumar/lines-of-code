@@ -32,9 +32,8 @@ from shutil import rmtree
 
 
 def init():
-    if exists("repos"):
-        rmtree("repos")
-    mkdir("repos")
+    if not exists("repos"):
+        mkdir("repos")
 
 
 def clear_repos():
