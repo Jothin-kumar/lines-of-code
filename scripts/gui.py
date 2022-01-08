@@ -25,12 +25,29 @@ Author: Jothin kumar (https://jothin-kumar.github.io/)
 Github repository of this project: https://github.com/Jothin-kumar/lines-of-code
 """
 import tkinter as tk
+from tkinter import simpledialog, messagebox
+from requests import get
+
+users_or_orgs = []
+
+
+def add_users_or_org():
+    users_or_org = simpledialog.askstring('Add a GitHub user or an organization',
+                                          'Enter a GitHub username or an organization:')
+    request = get(f'https://api.github.com/users/{users_or_org}')
+    try:
+        request.json()['login']
+        users_or_orgs.append(users_or_org)
+        refresh_usernames_and_orgs()
+    except KeyError:
+        messagebox.showerror('An error occurred', f'{users_or_org} is not a valid GitHub user or organization.')
+
 
 root = tk.Tk()
 root.title("Lines of Code - Jothin Kumar")
 root.resizable(False, False)
 top_frame = tk.Frame(root)
-add_GitHub_user_or_org_button = tk.Button(top_frame, text="Add a GitHub user / organisation")
+add_GitHub_user_or_org_button = tk.Button(top_frame, text="Add a GitHub user / organisation", command=add_users_or_org)
 add_GitHub_user_or_org_button.grid(row=0, column=0, padx=3)
 add_email_button = tk.Button(top_frame, text="Add an Email")
 add_email_button.grid(row=0, column=1, padx=3)
@@ -46,6 +63,14 @@ main_frame = tk.Frame(root, bg="lightgrey")
 user_and_email_selectors = tk.Frame(main_frame)
 usernames_and_orgs = tk.Listbox(user_and_email_selectors, height=15)
 usernames_and_orgs.pack(side=tk.TOP)
+
+
+def refresh_usernames_and_orgs():
+    usernames_and_orgs.delete(0, tk.END)
+    for user in users_or_orgs:
+        usernames_and_orgs.insert(tk.END, user)
+
+
 emails = tk.Listbox(user_and_email_selectors, height=15)
 emails.pack(side=tk.TOP)
 user_and_email_selectors.grid(row=0, column=0, padx=5, pady=2)
