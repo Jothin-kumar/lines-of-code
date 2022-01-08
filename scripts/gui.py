@@ -279,9 +279,9 @@ def refresh_result_viewer():
                 if selected_repo.status == 'Successfully analyzed':
                     status_label.config(bg='green', fg='white')
                 elif selected_repo.status == 'Analyzing':
-                    status_label.config(bg='yellow')
+                    status_label.config(bg='yellow', fg='black')
                 elif selected_repo.status == 'Not analyzed':
-                    status_label.config(bg='orange')
+                    status_label.config(bg='orange', fg='black')
                 total_commits.config(text=f'Total commits: {len(selected_repo.commits)}', bg='white')
                 total_lines_added.config(text=f'Additions: {selected_repo.additions}', bg='green')
                 total_lines_deleted.config(text=f'Deletions: {selected_repo.deletions}', bg='red')
