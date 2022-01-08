@@ -41,6 +41,10 @@ repos = []
 total_threads = 0
 max_threads = 10
 access_token = None
+selected_repo = None
+overall_additions = 0
+overall_deletions = 0
+overall_commits = 0
 init()
 
 
@@ -52,7 +56,8 @@ def add_user_or_org():
     else:
         try:
             if access_token:
-                request = get(f'https://api.github.com/users/{users_or_org}', headers={'Authorization': f'token {access_token}'})
+                request = get(f'https://api.github.com/users/{users_or_org}',
+                              headers={'Authorization': f'token {access_token}'})
             else:
                 request = get(f'https://api.github.com/users/{users_or_org}')
             request.json()['login']
@@ -77,6 +82,12 @@ def add_email():
         for repo in repos:
             repo.set_emails(email_list)
             repo.set_status('Not analyzed')
+        global overall_additions
+        global overall_deletions
+        global overall_commits
+        overall_additions = 0
+        overall_deletions = 0
+        overall_commits = 0
 
 
 def add_repo_url():
@@ -115,6 +126,12 @@ def auto_analyze_repos():
                 elif repo.status == 'Analyzed':
                     total_threads -= 1
                     repo.set_status('Successfully analyzed')
+                    global overall_additions
+                    global overall_deletions
+                    global overall_commits
+                    overall_additions += repo.additions
+                    overall_deletions += repo.deletions
+                    overall_commits += len(repo.commits)
             try:
                 set_status(f'{total_threads} threads running...')
             except NameError:
@@ -210,11 +227,8 @@ def on_repo_select(evt):
             if repo.git_clone_url == url:
                 return repo
 
-    repo = get_repo_by_url(value)
-    status_label.config(text=f'Status: {repo.status}')
-    total_commits.config(text=f'Total commits: {len(repo.commits)}')
-    total_lines_added.config(text=f'Additions: {repo.additions}')
-    total_lines_deleted.config(text=f'Deletions: {repo.deletions}')
+    global selected_repo
+    selected_repo = get_repo_by_url(value)
 
 
 repo_selector.bind('<<ListboxSelect>>', on_repo_select)
@@ -240,6 +254,24 @@ overall_stats = tk.Label(result_viewer, bg='lightgrey')
 overall_stats.pack(side=tk.BOTTOM, fill=tk.X)
 result_viewer.grid(row=0, column=2, padx=5, pady=2, sticky=tk.NSEW)
 
+
+def refresh_result_viewer():
+    try:
+        while True:
+            if selected_repo:
+                status_label.config(text=f'Status: {selected_repo.status}')
+                total_commits.config(text=f'Total commits: {len(selected_repo.commits)}')
+                total_lines_added.config(text=f'Additions: {selected_repo.additions}')
+                total_lines_deleted.config(text=f'Deletions: {selected_repo.deletions}')
+                overall_stats.config(text=f'Total additions: {overall_additions}'
+                                          f'\nTotal deletions: {overall_deletions}'
+                                          f'\nTotal commits: {overall_commits}')
+            sleep(0.1)
+    except RuntimeError:
+        pass
+
+
+Thread(target=refresh_result_viewer).start()
 main_frame.pack(side=tk.TOP, fill=tk.X, expand=True)
 tk.Label(root, text="Made by Jothin kumar", font=("Ariel", 15)).pack(side=tk.TOP, fill=tk.X)
 root.mainloop()
