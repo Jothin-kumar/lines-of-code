@@ -51,57 +51,60 @@ init()
 def add_user_or_org():
     users_or_org = simpledialog.askstring('Add a GitHub user or an organization',
                                           'Enter a GitHub username or an organization:')
-    if users_or_org in users_or_orgs:
-        messagebox.showwarning('Already exists', 'User/organisation already added!')
-    else:
-        try:
-            if access_token:
-                request = get(f'https://api.github.com/users/{users_or_org}',
-                              headers={'Authorization': f'token {access_token}'})
-            else:
-                request = get(f'https://api.github.com/users/{users_or_org}')
-            request.json()['login']
-            users_or_orgs.append(users_or_org)
-            refresh_usernames_and_orgs()
-            for repo in get_all_repos_of_user(users_or_org):
-                if repo not in repo_urls:
-                    repo_urls.append(repo)
-                    repos.append(Repository(repo, emails=email_list, auto_analyze=False))
-                    refresh_repo_urls()
-        except KeyError:
-            messagebox.showerror('An error occurred', f'{users_or_org} is not a valid GitHub user or organization.')
+    if users_or_org:
+        if users_or_org in users_or_orgs:
+            messagebox.showwarning('Already exists', 'User/organisation already added!')
+        else:
+            try:
+                if access_token:
+                    request = get(f'https://api.github.com/users/{users_or_org}',
+                                  headers={'Authorization': f'token {access_token}'})
+                else:
+                    request = get(f'https://api.github.com/users/{users_or_org}')
+                request.json()['login']
+                users_or_orgs.append(users_or_org)
+                refresh_usernames_and_orgs()
+                for repo in get_all_repos_of_user(users_or_org):
+                    if repo not in repo_urls:
+                        repo_urls.append(repo)
+                        repos.append(Repository(repo, emails=email_list, auto_analyze=False))
+                        refresh_repo_urls()
+            except KeyError:
+                messagebox.showerror('An error occurred', f'{users_or_org} is not a valid GitHub user or organization.')
 
 
 def add_email():
     email = simpledialog.askstring('Add Email', 'Enter an email:')
-    if email in email_list:
-        messagebox.showwarning('Already exists', 'Email already added!')
-    else:
-        email_list.append(email)
-        refresh_emails()
-        for repo in repos:
-            repo.set_emails(email_list)
-            repo.set_status('Not analyzed')
-        global overall_additions
-        global overall_deletions
-        global overall_commits
-        overall_additions = 0
-        overall_deletions = 0
-        overall_commits = 0
+    if email:
+        if email in email_list:
+            messagebox.showwarning('Already exists', 'Email already added!')
+        else:
+            email_list.append(email)
+            refresh_emails()
+            for repo in repos:
+                repo.set_emails(email_list)
+                repo.set_status('Not analyzed')
+            global overall_additions
+            global overall_deletions
+            global overall_commits
+            overall_additions = 0
+            overall_deletions = 0
+            overall_commits = 0
 
 
 def add_repo_url():
     repo_url = simpledialog.askstring('Add git repository URL', 'Enter a git repository URL:')
-    if repo_url in repo_urls:
-        messagebox.showwarning('Already exists', 'Repo URL already added!')
-    else:
-        try:
-            get(repo_url)
-            repo_urls.append(repo_url)
-            repos.append(Repository(repo_url, emails=email_list, auto_analyze=False))
-            refresh_repo_urls()
-        except:
-            messagebox.showerror('An error occurred', f'{repo_url} is likely not a valid git repository URL.')
+    if repo_url:
+        if repo_url in repo_urls:
+            messagebox.showwarning('Already exists', 'Repo URL already added!')
+        else:
+            try:
+                get(repo_url)
+                repo_urls.append(repo_url)
+                repos.append(Repository(repo_url, emails=email_list, auto_analyze=False))
+                refresh_repo_urls()
+            except:
+                messagebox.showerror('An error occurred', f'{repo_url} is likely not a valid git repository URL.')
 
 
 def purge_repos():
@@ -158,9 +161,10 @@ add_repo_button.grid(row=0, column=2, padx=3)
 
 def change_max_threads():
     new_max_threads = simpledialog.askinteger('Change max threads', 'Enter the new max threads:')
-    global max_threads
-    max_threads = new_max_threads
-    max_thread_button.config(text=f'Max threads: {max_threads}')
+    if new_max_threads:
+        global max_threads
+        max_threads = new_max_threads
+        max_thread_button.config(text=f'Max threads: {max_threads}')
 
 
 max_thread_button = tk.Button(top_frame, text="Max Threads: 10", command=change_max_threads)
@@ -173,8 +177,8 @@ def add_github_token():
     github_token = simpledialog.askstring('Add GitHub access token', 'Enter your GitHub access token:')
     if github_token:
         set_token(github_token)
-    global access_token
-    access_token = github_token
+        global access_token
+        access_token = github_token
 
 
 add_github_token_button = tk.Button(top_frame, text="Add GitHub access token", command=add_github_token)
