@@ -24,4 +24,33 @@ SOFTWARE.
 Author: Jothin kumar (https://jothin-kumar.github.io/)
 Github repository of this project: https://github.com/Jothin-kumar/lines-of-code
 """
-#  Coming soon...
+import tkinter as tk
+
+root = tk.Tk()
+root.title("Lines of Code - Jothin Kumar")
+root.resizable(False, False)
+
+user_and_email_selectors = tk.Frame(root)
+usernames_and_orgs = tk.Listbox(user_and_email_selectors, height=15)
+usernames_and_orgs.pack(side=tk.TOP)
+emails = tk.Listbox(user_and_email_selectors, height=15)
+emails.pack(side=tk.TOP)
+user_and_email_selectors.grid(row=0, column=0, padx=5, pady=2)
+
+repo_selector = tk.Listbox(root, height=30, width=50)
+repo_selector.grid(row=0, column=1, padx=5, pady=2)
+
+result_viewer = tk.Frame(root)
+status_label = tk.Label(result_viewer, text="Status")
+status_label.pack(side=tk.TOP, fill=tk.X)
+total_commits = tk.Label(result_viewer, text="Total Commits")
+total_commits.pack(side=tk.TOP, fill=tk.X)
+total_lines_added = tk.Label(result_viewer, text="Total Lines Added")
+total_lines_added.pack(side=tk.TOP, fill=tk.X)
+total_lines_deleted = tk.Label(result_viewer, text="Total Lines Deleted")
+total_lines_deleted.pack(side=tk.TOP, fill=tk.X)
+overall_stats = tk.Label(result_viewer, text="Overall Stats")
+overall_stats.pack(side=tk.BOTTOM, fill=tk.X)
+result_viewer.grid(row=0, column=2, padx=5, pady=2, sticky=tk.NSEW)
+
+root.mainloop()
