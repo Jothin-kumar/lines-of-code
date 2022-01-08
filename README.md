@@ -7,6 +7,8 @@ To calculate the total number of lines you (or your friend) have written,
  - navigate to lines-of-code using ```cd "lines-of-code"```.
  - run ```pip install -r requirements.txt```
  - navigate to scripts using ```cd scripts```
+ - run gui.py using ```python gui.py```  
+   (or)
  - run terminal.py using ```python terminal.py``` in windows or ```python3 terminal.py``` in ubuntu.
  - Enter E-mail and other details.
  - Wait for the results to be generated.

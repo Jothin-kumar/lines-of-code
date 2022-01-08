@@ -90,4 +90,4 @@ clear_repos()
 
 print('If you like this tool, kindly leave a star at https://github.com/Jothin-kumar/lines-of-code :-).')
 print('Thank you!')
-print('GUI version coming soon...')
+print('Try GUI version for a better experience!')
