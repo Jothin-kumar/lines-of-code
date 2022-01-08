@@ -83,6 +83,7 @@ def purge_repos():
 root = tk.Tk()
 root.title("Lines of Code - Jothin Kumar")
 root.resizable(False, False)
+
 top_frame = tk.Frame(root)
 add_GitHub_user_or_org_button = tk.Button(top_frame, text="Add a GitHub user / organisation", command=add_user_or_org)
 add_GitHub_user_or_org_button.grid(row=0, column=0, padx=3)
@@ -95,6 +96,14 @@ max_thread_button.grid(row=0, column=3, padx=3)
 purge_button = tk.Button(top_frame, text="Purge repositories", command=purge_repos)
 purge_button.grid(row=0, column=4, padx=3)
 top_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
+
+status_label = tk.Label(root)
+status_label.pack(side=tk.TOP, fill=tk.X)
+
+
+def set_status(status):
+    status_label.config(text=status)
+
 main_frame = tk.Frame(root, bg="lightgrey")
 
 user_and_email_selectors = tk.Frame(main_frame)
