@@ -133,7 +133,7 @@ def auto_analyze_repos():
                     overall_deletions += repo.deletions
                     overall_commits += len(repo.commits)
             try:
-                set_status(f'{total_threads} threads running...')
+                set_status(f'{total_threads} thread(s) running...')
             except NameError:
                 pass
             sleep(0.1)
