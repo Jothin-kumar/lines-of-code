@@ -257,7 +257,7 @@ total_lines_added = tk.Label(result_viewer, bg='lightgrey')
 total_lines_added.pack(side=tk.TOP, fill=tk.X)
 total_lines_deleted = tk.Label(result_viewer, bg='lightgrey')
 total_lines_deleted.pack(side=tk.TOP, fill=tk.X)
-overall_stats = tk.Label(result_viewer, bg='lightgrey', font=('Ariel', 12))
+overall_stats = tk.Label(result_viewer, bg='lightgrey', font=('Ariel', 15))
 overall_stats.pack(side=tk.BOTTOM, fill=tk.X)
 result_viewer.grid(row=0, column=2, padx=5, pady=2, sticky=tk.NSEW)
 
@@ -280,5 +280,5 @@ def refresh_result_viewer():
 
 Thread(target=refresh_result_viewer).start()
 main_frame.pack(side=tk.TOP, fill=tk.X, expand=True)
-tk.Label(root, text="Made by Jothin kumar", font=("Ariel", 15)).pack(side=tk.TOP, fill=tk.X)
+tk.Label(root, text="Made by Jothin kumar", font=("Ariel", 20)).pack(side=tk.TOP, fill=tk.X)
 root.mainloop()
