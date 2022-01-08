@@ -38,14 +38,15 @@ if emails == ['']:
     exit()
 print('')
 
-GitHub_username = input('Please enter your GitHub username (optional): ')
-if GitHub_username:
+GitHub_usernames_and_orgs = input('Please enter your GitHub username(s) and organization(s) separated with a space. (optional): ').split(' ')
+if GitHub_usernames_and_orgs:
     GitHub_token = input('Please enter your GitHub API token (optional): ')
-    if GitHub_token:
-        set_token(GitHub_token)
-    print('Fetching GitHub repositories...')
-    git_clone_urls = get_all_repos_of_user(GitHub_username)
-    print(f'Fetched {len(git_clone_urls)} repositories.')
+    for GitHub_username_or_org in GitHub_usernames_and_orgs:
+        if GitHub_token:
+            set_token(GitHub_token)
+        print(f'Fetching GitHub repositories of GitHub user: "{GitHub_username_or_org}"...')
+        git_clone_urls = get_all_repos_of_user(GitHub_username_or_org)
+        print(f'Fetched {len(git_clone_urls)} repositories.')
 print('')
 
 git_clone_urls += input('Please enter git clone url(s) seperated by space (optional): ').split(' ')
