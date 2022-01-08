@@ -260,7 +260,13 @@ total_lines_added = tk.Label(result_viewer, bg='lightgrey')
 total_lines_added.pack(side=tk.TOP, fill=tk.X)
 total_lines_deleted = tk.Label(result_viewer, bg='lightgrey')
 total_lines_deleted.pack(side=tk.TOP, fill=tk.X)
-overall_stats = tk.Label(result_viewer, bg='lightgrey', font=('Ariel', 15))
+overall_stats = tk.Frame(result_viewer, bg='lightgrey')
+overall_commits_label = tk.Label(overall_stats, bg='white', font=('Ariel', 15))
+overall_commits_label.pack(side=tk.TOP, fill=tk.X)
+overall_lines_added_label = tk.Label(overall_stats, bg='green', font=('Ariel', 15))
+overall_lines_added_label.pack(side=tk.TOP, fill=tk.X)
+overall_lines_deleted_label = tk.Label(overall_stats, bg='red', font=('Ariel', 15))
+overall_lines_deleted_label.pack(side=tk.TOP, fill=tk.X)
 overall_stats.pack(side=tk.BOTTOM, fill=tk.X)
 result_viewer.grid(row=0, column=2, padx=5, pady=2, sticky=tk.NSEW)
 
@@ -276,12 +282,12 @@ def refresh_result_viewer():
                     status_label.config(bg='yellow')
                 elif selected_repo.status == 'Not analyzed':
                     status_label.config(bg='orange')
-                total_commits.config(text=f'Total commits: {len(selected_repo.commits)}')
-                total_lines_added.config(text=f'Additions: {selected_repo.additions}')
-                total_lines_deleted.config(text=f'Deletions: {selected_repo.deletions}')
-            overall_stats.config(text=f'Total additions: {overall_additions}\n'
-                                      f'Total deletions: {overall_deletions}\n'
-                                      f'Total commits: {overall_commits}')
+                total_commits.config(text=f'Total commits: {len(selected_repo.commits)}', bg='white')
+                total_lines_added.config(text=f'Additions: {selected_repo.additions}', bg='green')
+                total_lines_deleted.config(text=f'Deletions: {selected_repo.deletions}', bg='red')
+            overall_commits_label.config(text=f'Total commits: {overall_commits}')
+            overall_lines_added_label.config(text=f'Additions: {overall_additions}')
+            overall_lines_deleted_label.config(text=f'Deletions: {overall_deletions}')
             sleep(0.1)
     except RuntimeError:
         pass
