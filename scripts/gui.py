@@ -92,7 +92,7 @@ def purge_repos():
         mkdir('repos')
         messagebox.showinfo('Success', 'All repositories have been successfully cleared.')
     else:
-        messagebox.showwarning('Cannot purge repositories', 'Repositories can be cleared only when all threads are finished.')
+        messagebox.showerror('Cannot purge repositories', 'Repositories can be cleared only when all threads are finished.')
 
 
 def auto_analyze_repos():
