@@ -32,7 +32,7 @@ from threading import Thread
 from time import sleep
 
 from _lines_of_code import init, clear_repos, Repository
-from _github_repos import get_all_repos_of_user
+from _github_repos import get_all_repos_of_user, set_token
 
 users_or_orgs = []
 email_list = []
@@ -92,7 +92,8 @@ def purge_repos():
         mkdir('repos')
         messagebox.showinfo('Success', 'All repositories have been successfully cleared.')
     else:
-        messagebox.showerror('Cannot purge repositories', 'Repositories can be cleared only when all threads are finished.')
+        messagebox.showerror('Cannot purge repositories',
+                             'Repositories can be cleared only when all threads are finished.')
 
 
 def auto_analyze_repos():
@@ -142,6 +143,16 @@ max_thread_button = tk.Button(top_frame, text="Max Threads: 10", command=change_
 max_thread_button.grid(row=0, column=3, padx=3)
 purge_button = tk.Button(top_frame, text="Purge repositories", command=purge_repos)
 purge_button.grid(row=0, column=4, padx=3)
+
+
+def add_github_token():
+    github_token = simpledialog.askstring('Add GitHub access token', 'Enter your GitHub access token:')
+    if github_token:
+        set_token(github_token)
+
+
+add_github_token_button = tk.Button(top_frame, text="Add GitHub access token", command=add_github_token)
+add_github_token_button.grid(row=0, column=5, padx=3)
 top_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
 
 status_bar_label = tk.Label(root)
