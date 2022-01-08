@@ -27,10 +27,14 @@ Github repository of this project: https://github.com/Jothin-kumar/lines-of-code
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 from requests import get
+from os import mkdir
+
+from _lines_of_code import init, clear_repos, Repository
 
 users_or_orgs = []
 email_list = []
 repo_urls = []
+init()
 
 
 def add_user_or_org():
@@ -70,6 +74,12 @@ def add_repo_url():
         refresh_repo_urls()
 
 
+def purge_repos():
+    clear_repos()
+    mkdir('repos')
+    messagebox.showinfo('Success', 'All repositories have been successfully cleared.')
+
+
 root = tk.Tk()
 root.title("Lines of Code - Jothin Kumar")
 root.resizable(False, False)
@@ -82,7 +92,7 @@ add_repo_button = tk.Button(top_frame, text="Add a Repository", command=add_repo
 add_repo_button.grid(row=0, column=2, padx=3)
 max_thread_button = tk.Button(top_frame, text="Max Threads: 10")
 max_thread_button.grid(row=0, column=3, padx=3)
-purge_button = tk.Button(top_frame, text="Purge repositories")
+purge_button = tk.Button(top_frame, text="Purge repositories", command=purge_repos)
 purge_button.grid(row=0, column=4, padx=3)
 top_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
 main_frame = tk.Frame(root, bg="lightgrey")
