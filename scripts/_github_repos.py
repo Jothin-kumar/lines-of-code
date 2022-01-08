@@ -38,10 +38,7 @@ def set_token(token):
 
 
 def get_all_repos_of_user(user):
-    if token_in_use:
-        repos = GitHub.get_user().get_repos()
-    else:
-        repos = GitHub.get_user(user).get_repos()
+    repos = GitHub.get_user(user).get_repos()
     urls = []
     for repo in repos:
         urls.append(repo.html_url)
