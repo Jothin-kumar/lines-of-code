@@ -29,6 +29,7 @@ from tkinter import simpledialog, messagebox
 from requests import get
 from os import mkdir
 from threading import Thread
+from time import sleep
 
 from _lines_of_code import init, clear_repos, Repository
 from _github_repos import get_all_repos_of_user
@@ -36,6 +37,7 @@ from _github_repos import get_all_repos_of_user
 users_or_orgs = []
 email_list = []
 repo_urls = []
+repos = []
 total_threads = 0
 init()
 
@@ -54,6 +56,7 @@ def add_user_or_org():
             for repo in get_all_repos_of_user(users_or_org):
                 if repo not in repo_urls:
                     repo_urls.append(repo)
+                    repos.append(Repository(repo, emails=email_list, auto_analyze=False))
                     refresh_repo_urls()
         except KeyError:
             messagebox.showerror('An error occurred', f'{users_or_org} is not a valid GitHub user or organization.')
@@ -76,9 +79,10 @@ def add_repo_url():
         try:
             get(repo_url)
             repo_urls.append(repo_url)
+            repos.append(Repository(repo_url, emails=email_list, auto_analyze=False))
+            refresh_repo_urls()
         except:
             messagebox.showerror('An error occurred', f'{repo_url} is likely not a valid git repository URL.')
-        refresh_repo_urls()
 
 
 def purge_repos():
@@ -86,6 +90,29 @@ def purge_repos():
     mkdir('repos')
     messagebox.showinfo('Success', 'All repositories have been successfully cleared.')
 
+
+def auto_analyze_repos():
+    global total_threads
+    total_threads = 0
+    try:
+        while True:
+            for repo in repos:
+                if repo.status == 'Not analyzed' and total_threads < 10:
+                    Thread(target=repo.analyse).start()
+                    total_threads += 1
+                elif repo.status == 'Analyzed':
+                    total_threads -= 1
+                    repo.set_status('Successfully analyzed')
+            try:
+                set_status(f'{total_threads} threads running...')
+            except NameError:
+                pass
+            sleep(0.1)
+    except RuntimeError:
+        pass
+
+
+Thread(target=auto_analyze_repos).start()
 
 root = tk.Tk()
 root.title("Lines of Code - Jothin Kumar")
@@ -138,6 +165,26 @@ def refresh_emails():
 user_and_email_selectors.grid(row=0, column=0, padx=5, pady=2)
 
 repo_selector = tk.Listbox(main_frame, height=30, width=50)
+
+
+def on_repo_select(evt):
+    w = evt.widget
+    index = int(w.curselection()[0])
+    value = w.get(index)
+
+    def get_repo_by_url(url):
+        for repo in repos:
+            if repo.git_clone_url == url:
+                return repo
+
+    repo = get_repo_by_url(value)
+    status_label.config(text=f'Status: {repo.status}')
+    total_commits.config(text=f'Total commits: {len(repo.commits)}')
+    total_lines_added.config(text=f'Additions: {repo.additions}')
+    total_lines_deleted.config(text=f'Deletions: {repo.deletions}')
+
+
+repo_selector.bind('<<ListboxSelect>>', on_repo_select)
 repo_selector.grid(row=0, column=1, padx=5, pady=2)
 
 
@@ -148,15 +195,15 @@ def refresh_repo_urls():
 
 
 result_viewer = tk.Frame(main_frame, bg='lightgrey')
-status_label = tk.Label(result_viewer, text="Status", bg='lightgrey')
+status_label = tk.Label(result_viewer, bg='lightgrey')
 status_label.pack(side=tk.TOP, fill=tk.X)
-total_commits = tk.Label(result_viewer, text="Total Commits", bg='lightgrey')
+total_commits = tk.Label(result_viewer, bg='lightgrey')
 total_commits.pack(side=tk.TOP, fill=tk.X)
-total_lines_added = tk.Label(result_viewer, text="Total Lines Added", bg='lightgrey')
+total_lines_added = tk.Label(result_viewer, bg='lightgrey')
 total_lines_added.pack(side=tk.TOP, fill=tk.X)
-total_lines_deleted = tk.Label(result_viewer, text="Total Lines Deleted", bg='lightgrey')
+total_lines_deleted = tk.Label(result_viewer, bg='lightgrey')
 total_lines_deleted.pack(side=tk.TOP, fill=tk.X)
-overall_stats = tk.Label(result_viewer, text="Overall Stats", bg='lightgrey')
+overall_stats = tk.Label(result_viewer, bg='lightgrey')
 overall_stats.pack(side=tk.BOTTOM, fill=tk.X)
 result_viewer.grid(row=0, column=2, padx=5, pady=2, sticky=tk.NSEW)
 
