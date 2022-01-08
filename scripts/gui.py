@@ -252,7 +252,7 @@ def refresh_repo_urls():
 
 
 result_viewer = tk.Frame(main_frame, bg='lightgrey')
-status_label = tk.Label(result_viewer, bg='lightgrey')
+status_label = tk.Label(result_viewer, bg='lightgrey', font=('Helvetica', 15))
 status_label.pack(side=tk.TOP, fill=tk.X)
 total_commits = tk.Label(result_viewer, bg='lightgrey')
 total_commits.pack(side=tk.TOP, fill=tk.X)
@@ -270,6 +270,12 @@ def refresh_result_viewer():
         while True:
             if selected_repo:
                 status_label.config(text=f'Status: {selected_repo.status}')
+                if selected_repo.status == 'Successfully analyzed':
+                    status_label.config(bg='green', fg='white')
+                elif selected_repo.status == 'Analyzing':
+                    status_label.config(bg='yellow')
+                elif selected_repo.status == 'Not analyzed':
+                    status_label.config(bg='orange')
                 total_commits.config(text=f'Total commits: {len(selected_repo.commits)}')
                 total_lines_added.config(text=f'Additions: {selected_repo.additions}')
                 total_lines_deleted.config(text=f'Deletions: {selected_repo.deletions}')
