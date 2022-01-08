@@ -107,3 +107,6 @@ class Repository:
 
     def set_status(self, status):
         self.status = status
+
+    def set_emails(self, emails):
+        self.emails = emails

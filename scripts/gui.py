@@ -70,6 +70,9 @@ def add_email():
     else:
         email_list.append(email)
         refresh_emails()
+        for repo in repos:
+            repo.set_emails(email_list)
+            repo.set_status('Not analyzed')
 
 
 def add_repo_url():
