@@ -28,26 +28,33 @@ import tkinter as tk
 from tkinter import simpledialog, messagebox
 from requests import get
 from os import mkdir
+from threading import Thread
 
 from _lines_of_code import init, clear_repos, Repository
+from _github_repos import get_all_repos_of_user
 
 users_or_orgs = []
 email_list = []
 repo_urls = []
+total_threads = 0
 init()
 
 
 def add_user_or_org():
     users_or_org = simpledialog.askstring('Add a GitHub user or an organization',
                                           'Enter a GitHub username or an organization:')
-    request = get(f'https://api.github.com/users/{users_or_org}')
     if users_or_org in users_or_orgs:
         messagebox.showwarning('Already exists', 'User/organisation already added!')
     else:
         try:
+            request = get(f'https://api.github.com/users/{users_or_org}')
             request.json()['login']
             users_or_orgs.append(users_or_org)
             refresh_usernames_and_orgs()
+            for repo in get_all_repos_of_user(users_or_org):
+                if repo not in repo_urls:
+                    repo_urls.append(repo)
+                    refresh_repo_urls()
         except KeyError:
             messagebox.showerror('An error occurred', f'{users_or_org} is not a valid GitHub user or organization.')
 
@@ -97,12 +104,13 @@ purge_button = tk.Button(top_frame, text="Purge repositories", command=purge_rep
 purge_button.grid(row=0, column=4, padx=3)
 top_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
 
-status_label = tk.Label(root)
-status_label.pack(side=tk.TOP, fill=tk.X)
+status_bar_label = tk.Label(root)
+status_bar_label.pack(side=tk.TOP, fill=tk.X)
 
 
 def set_status(status):
-    status_label.config(text=status)
+    status_bar_label.config(text=status)
+
 
 main_frame = tk.Frame(root, bg="lightgrey")
 
