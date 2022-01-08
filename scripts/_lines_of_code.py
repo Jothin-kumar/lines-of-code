@@ -32,9 +32,8 @@ from shutil import rmtree
 
 
 def init():
-    if exists("repos"):
-        rmtree("repos")
-    mkdir("repos")
+    if not exists("repos"):
+        mkdir("repos")
 
 
 def clear_repos():
@@ -69,22 +68,25 @@ class Commit:
 
 
 class Repository:
-    def __init__(self, git_clone_url, emails):
+    def __init__(self, git_clone_url, emails, auto_analyze=True):
         self.git_clone_url = git_clone_url
         self.id = sha256(git_clone_url.encode()).hexdigest()
         self.emails = emails
         self.commits = []
         self.additions = 0
         self.deletions = 0
-        self.status = 'analyzing'
+        self.status = 'Not analyzed'
 
-        Thread(target=self.analyse).start()
+        if auto_analyze:
+            Thread(target=self.analyse).start()
 
     def clone_and_get_log(self):
-        system(f'cd repos && git clone --bare {self.git_clone_url} {self.id}')
+        if not exists("repos/" + self.id):
+            system(f'cd repos && git clone --bare {self.git_clone_url} {self.id}')
         system('cd repos/' + self.id + " && git log --pretty=format:'%H%ae' > logs.txt")
 
     def analyse(self):
+        self.status = 'Analyzing'
         self.clone_and_get_log()
         with open("repos/" + self.id + "/logs.txt") as f:
             lines = f.readlines()
@@ -100,4 +102,10 @@ class Repository:
         for commit in self.commits:
             self.additions += commit.additions
             self.deletions += commit.deletions
-        self.status = 'analyzed'
+        self.status = 'Analyzed'
+
+    def set_status(self, status):
+        self.status = status
+
+    def set_emails(self, emails):
+        self.emails = emails
