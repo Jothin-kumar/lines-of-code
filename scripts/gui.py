@@ -40,6 +40,7 @@ repo_urls = []
 repos = []
 total_threads = 0
 max_threads = 10
+access_token = None
 init()
 
 
@@ -50,7 +51,10 @@ def add_user_or_org():
         messagebox.showwarning('Already exists', 'User/organisation already added!')
     else:
         try:
-            request = get(f'https://api.github.com/users/{users_or_org}')
+            if access_token:
+                request = get(f'https://api.github.com/users/{users_or_org}', headers={'Authorization': f'token {access_token}'})
+            else:
+                request = get(f'https://api.github.com/users/{users_or_org}')
             request.json()['login']
             users_or_orgs.append(users_or_org)
             refresh_usernames_and_orgs()
@@ -152,6 +156,8 @@ def add_github_token():
     github_token = simpledialog.askstring('Add GitHub access token', 'Enter your GitHub access token:')
     if github_token:
         set_token(github_token)
+    global access_token
+    access_token = github_token
 
 
 add_github_token_button = tk.Button(top_frame, text="Add GitHub access token", command=add_github_token)
