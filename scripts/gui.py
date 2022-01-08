@@ -31,7 +31,7 @@ from requests import get
 users_or_orgs = []
 
 
-def add_users_or_org():
+def add_user_or_org():
     users_or_org = simpledialog.askstring('Add a GitHub user or an organization',
                                           'Enter a GitHub username or an organization:')
     request = get(f'https://api.github.com/users/{users_or_org}')
@@ -50,7 +50,7 @@ root = tk.Tk()
 root.title("Lines of Code - Jothin Kumar")
 root.resizable(False, False)
 top_frame = tk.Frame(root)
-add_GitHub_user_or_org_button = tk.Button(top_frame, text="Add a GitHub user / organisation", command=add_users_or_org)
+add_GitHub_user_or_org_button = tk.Button(top_frame, text="Add a GitHub user / organisation", command=add_user_or_org)
 add_GitHub_user_or_org_button.grid(row=0, column=0, padx=3)
 add_email_button = tk.Button(top_frame, text="Add an Email")
 add_email_button.grid(row=0, column=1, padx=3)
