@@ -161,7 +161,7 @@ add_repo_button.grid(row=0, column=2, padx=3)
 
 def change_max_threads():
     new_max_threads = simpledialog.askinteger('Change max threads', 'Enter the new max threads:')
-    if new_max_threads:
+    if int(new_max_threads) > 0:
         global max_threads
         max_threads = new_max_threads
         max_thread_button.config(text=f'Max threads: {max_threads}')
