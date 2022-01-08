@@ -222,17 +222,20 @@ repo_selector = tk.Listbox(main_frame, height=30, width=50)
 
 
 def on_repo_select(evt):
-    w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
+    try:
+        w = evt.widget
+        index = int(w.curselection()[0])
+        value = w.get(index)
 
-    def get_repo_by_url(url):
-        for repo in repos:
-            if repo.git_clone_url == url:
-                return repo
+        def get_repo_by_url(url):
+            for repo in repos:
+                if repo.git_clone_url == url:
+                    return repo
 
-    global selected_repo
-    selected_repo = get_repo_by_url(value)
+        global selected_repo
+        selected_repo = get_repo_by_url(value)
+    except IndexError:
+        pass
 
 
 repo_selector.bind('<<ListboxSelect>>', on_repo_select)
