@@ -172,6 +172,8 @@ def change_max_threads():
             global max_threads
             max_threads = new_max_threads
             max_thread_button.config(text=f'Max threads: {max_threads}')
+        else:
+            messagebox.showwarning('Invalid max threads specified.', 'Max threads must be >= 1.')
     except TypeError:
         pass
 
