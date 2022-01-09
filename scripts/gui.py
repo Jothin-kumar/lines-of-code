@@ -86,15 +86,15 @@ def add_email():
         else:
             email_list.append(email)
             refresh_emails()
-            for repo in repos:
-                repo.set_emails(email_list)
-                repo.set_status('Not analyzed')
             global overall_additions
             global overall_deletions
             global overall_commits
             overall_additions = 0
             overall_deletions = 0
             overall_commits = 0
+            for repo in repos:
+                repo.set_emails(email_list)
+                repo.set_status('Not analyzed')
 
 
 def add_repo_url():
