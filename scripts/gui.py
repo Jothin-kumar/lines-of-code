@@ -39,7 +39,7 @@ email_list = []
 repo_urls = []
 repos = []
 total_threads = 0
-max_threads = 10
+max_threads = 5
 access_token = None
 selected_repo = None
 overall_additions = 0
@@ -86,15 +86,15 @@ def add_email():
         else:
             email_list.append(email)
             refresh_emails()
-            for repo in repos:
-                repo.set_emails(email_list)
-                repo.set_status('Not analyzed')
             global overall_additions
             global overall_deletions
             global overall_commits
             overall_additions = 0
             overall_deletions = 0
             overall_commits = 0
+            for repo in repos:
+                repo.set_emails(email_list)
+                repo.set_status('Not analyzed')
 
 
 def add_repo_url():
@@ -113,13 +113,14 @@ def add_repo_url():
 
 
 def purge_repos():
-    if total_threads == 0:
-        clear_repos()
-        mkdir('repos')
-        messagebox.showinfo('Success', 'All repositories have been successfully cleared.')
-    else:
-        messagebox.showerror('Cannot purge repositories',
-                             'Repositories can be cleared only when all threads are finished.')
+    if messagebox.askokcancel('Confirmation', 'Are you sure you want to clear all repositories?'):
+        if total_threads == 0:
+            clear_repos()
+            mkdir('repos')
+            messagebox.showinfo('Success', 'All repositories have been successfully cleared.')
+        else:
+            messagebox.showerror('Cannot purge repositories',
+                                 'Repositories can be cleared only when all threads are finished.')
 
 
 def auto_analyze_repos():
@@ -171,11 +172,13 @@ def change_max_threads():
             global max_threads
             max_threads = new_max_threads
             max_thread_button.config(text=f'Max threads: {max_threads}')
+        else:
+            messagebox.showwarning('Invalid max threads specified.', 'Max threads must be >= 1.')
     except TypeError:
         pass
 
 
-max_thread_button = tk.Button(top_frame, text="Max Threads: 10", command=change_max_threads)
+max_thread_button = tk.Button(top_frame, text=f"Max Threads: {max_threads}", command=change_max_threads)
 max_thread_button.grid(row=0, column=3, padx=3)
 purge_button = tk.Button(top_frame, text="Purge repositories", command=purge_repos)
 purge_button.grid(row=0, column=4, padx=3)
