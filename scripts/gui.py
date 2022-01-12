@@ -39,7 +39,7 @@ email_list = []
 repo_urls = []
 repos = []
 total_threads = 0
-max_threads = 10
+max_threads = 5
 access_token = None
 selected_repo = None
 overall_additions = 0
@@ -178,7 +178,7 @@ def change_max_threads():
         pass
 
 
-max_thread_button = tk.Button(top_frame, text="Max Threads: 10", command=change_max_threads)
+max_thread_button = tk.Button(top_frame, text=f"Max Threads: {max_threads}", command=change_max_threads)
 max_thread_button.grid(row=0, column=3, padx=3)
 purge_button = tk.Button(top_frame, text="Purge repositories", command=purge_repos)
 purge_button.grid(row=0, column=4, padx=3)
