@@ -30,6 +30,8 @@ from hashlib import sha256
 from threading import Thread
 from shutil import rmtree
 
+commit_hashes = []
+
 
 def init():
     if not exists("repos"):
@@ -96,7 +98,9 @@ class Repository:
                 commit_hash = line[:40]
                 if email in self.emails:
                     try:
-                        self.commits.append(Commit(commit_hash, self.id))
+                        if commit_hash not in commit_hashes:
+                            self.commits.append(Commit(commit_hash, self.id))
+                            commit_hashes.append(commit_hash)
                     except IndexError:
                         pass
         for commit in self.commits:
