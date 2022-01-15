@@ -88,6 +88,9 @@ class Repository:
     def analyse(self):
         self.status = 'Analyzing'
         self.clone_and_get_log()
+        self.commits = []
+        self.additions = 0
+        self.deletions = 0
         with open("repos/" + self.id + "/logs.txt") as f:
             lines = f.readlines()
             for line in lines:

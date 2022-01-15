@@ -218,6 +218,30 @@ def refresh_usernames_and_orgs():
 
 
 emails = tk.Listbox(user_and_email_selectors, height=15)
+emails.bind('<Double-Button-1>', lambda evt: add_email())
+
+
+def on_del_key_email(evt):
+    w = evt.widget
+    index = int(w.curselection()[0])
+    email = w.get(index)
+    if email in email_list:
+        confirmation = messagebox.askokcancel('Delete email', f'Are you sure you want to delete {email}?')
+        if confirmation:
+            email_list.remove(email)
+            refresh_emails()
+            global overall_additions
+            global overall_deletions
+            global overall_commits
+            overall_additions = 0
+            overall_deletions = 0
+            overall_commits = 0
+            for repo in repos:
+                repo.set_emails(email_list)
+                repo.set_status('Not analyzed')
+
+
+emails.bind('<Delete>', on_del_key_email)
 emails.pack(side=tk.TOP)
 
 
