@@ -37,6 +37,10 @@ def set_token(token):
     token_in_use = True
 
 
+def get_number_of_public_repos(user):
+    return GitHub.get_user(user).public_repos
+
+
 def get_all_repos_of_user(user):
     repos = GitHub.get_user(user).get_repos()
     urls = []
