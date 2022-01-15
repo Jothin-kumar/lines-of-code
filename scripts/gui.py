@@ -215,6 +215,57 @@ main_frame = tk.Frame(root, bg="lightgrey")
 user_and_email_selectors = tk.Frame(main_frame)
 usernames_and_orgs = tk.Listbox(user_and_email_selectors, height=15)
 usernames_and_orgs.bind('<Double-Button-1>', lambda event: add_user_or_org())
+
+
+def on_username_and_org_del(evt):
+    w = evt.widget
+    index = int(w.curselection()[0])
+    usernames_or_org = w.get(index)
+    window = tk.Toplevel()
+    window.title(f'Delete GitHub user: {usernames_or_org}')
+    window.resizable(False, False)
+    tk.Label(window, text=f'Are you sure you want to delete the GitHub user or organization "{usernames_or_org}"?\nhere are the repositories owned by {usernames_or_org}', font=('Helvetica', 20)).pack(side=tk.TOP, pady=5)
+    repo_list = tk.Listbox(window, height=20)
+    for repo in get_all_repos_of_user(usernames_or_org):
+        repo_list.insert(tk.END, repo)
+    repo_list.pack(side=tk.TOP, fill=tk.X)
+    def remove_user_or_org_only():
+        usernames_and_orgs.delete(index)
+        users_or_orgs.remove(usernames_or_org)
+        window.destroy()
+    def delete_all_repos():
+        usernames_and_orgs.delete(index)
+        users_or_orgs.remove(usernames_or_org)
+        global overall_additions
+        global overall_deletions
+        global overall_commits
+        overall_additions = 0
+        overall_deletions = 0
+        overall_commits = 0
+        overall_commits_label.config(text='Overall commits: 0')
+        overall_lines_added_label.config(text='Overall additions: 0')
+        overall_lines_deleted_label.config(text='Overall deletions: 0')
+        for repo_url in repo_list.get(0, tk.END):
+            repo_ = get_repo_by_url(repo_url)
+            repo_urls.remove(repo_url)
+            repos.remove(repo_)
+            status_label.config(text='', bg='lightgrey')
+            total_commits.config(text='', bg='lightgrey')
+            total_lines_added.config(text='', bg='lightgrey')
+            total_lines_deleted.config(text='', bg='lightgrey')
+            global selected_repo
+            selected_repo = None
+            refresh_repo_urls()
+        for repo_ in repos:
+            repo_.set_status('Not analyzed')
+        window.destroy()
+    tk.Button(window, text='Delete user or organization only', command=remove_user_or_org_only).pack(side=tk.LEFT, pady=10)
+    tk.Button(window, text='Delete all repositories of this user / organization.', command=delete_all_repos).pack(side=tk.LEFT, pady=10)
+    tk.Button(window, text='Cancel', command=window.destroy).pack(side=tk.LEFT, pady=10)
+    window.mainloop()
+
+
+usernames_and_orgs.bind('<Delete>', on_username_and_org_del)
 usernames_and_orgs.pack(side=tk.TOP)
 
 
@@ -243,6 +294,9 @@ def on_del_key_email(evt):
             overall_additions = 0
             overall_deletions = 0
             overall_commits = 0
+            overall_commits_label.config(text='Overall commits: 0')
+            overall_lines_added_label.config(text='Overall additions: 0')
+            overall_lines_deleted_label.config(text='Overall deletions: 0')
             for repo in repos:
                 repo.set_emails(email_list)
                 repo.set_status('Not analyzed')
@@ -294,12 +348,16 @@ def on_repo_selector_del(evt):
             repo_selector.delete(index)
             repo = get_repo_by_url(value)
             repos.remove(repo)
+            repo_urls.remove(value)
             global overall_additions
             global overall_deletions
             global overall_commits
             overall_additions -= repo.additions
             overall_deletions -= repo.deletions
             overall_commits -= len(repo.commits)
+            overall_commits_label.config(text=f'Overall commits: {overall_commits}')
+            overall_lines_added_label.config(text=f'Overall additions: {overall_additions}')
+            overall_lines_deleted_label.config(text=f'Overall deletions: {overall_deletions}')
             status_label.config(text='', bg='lightgrey')
             total_commits.config(text='', bg='lightgrey')
             total_lines_added.config(text='', bg='lightgrey')
@@ -377,6 +435,8 @@ def refresh_result_viewer():
                         repo_selector.itemconfig(get_index(repo_url), {'bg': 'yellow', 'fg': 'black'})
                     elif repo.status == 'Not analyzed':
                         repo_selector.itemconfig(get_index(repo_url), {'bg': 'red', 'fg': 'black'})
+                except RuntimeError:
+                    break
                 except Exception as e:
                     print(e)
             sleep(0.1)
