@@ -227,7 +227,8 @@ def on_username_and_org_del(evt):
     tk.Label(window, text=f'Are you sure you want to delete the GitHub user or organization "{usernames_or_org}"?\nhere are the repositories owned by {usernames_or_org}', font=('Helvetica', 20)).pack(side=tk.TOP, pady=5)
     repo_list = tk.Listbox(window, height=20)
     for repo in get_all_repos_of_user(usernames_or_org):
-        repo_list.insert(tk.END, repo)
+        if repo in repo_urls:
+            repo_list.insert(tk.END, repo)
     repo_list.pack(side=tk.TOP, fill=tk.X)
     def remove_user_or_org_only():
         usernames_and_orgs.delete(index)
