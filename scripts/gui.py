@@ -282,6 +282,35 @@ def on_repo_select(evt):
 
 
 repo_selector.bind('<<ListboxSelect>>', on_repo_select)
+
+
+def on_repo_selector_del(evt):
+    try:
+        w = evt.widget
+        index = int(w.curselection()[0])
+        value = w.get(index)
+        confirmation = messagebox.askokcancel('Delete repository', f'Are you sure you want to delete {value}?')
+        if confirmation:
+            repo_selector.delete(index)
+            repo = get_repo_by_url(value)
+            repos.remove(repo)
+            global overall_additions
+            global overall_deletions
+            global overall_commits
+            overall_additions -= repo.additions
+            overall_deletions -= repo.deletions
+            overall_commits -= len(repo.commits)
+            status_label.config(text='', bg='lightgrey')
+            total_commits.config(text='', bg='lightgrey')
+            total_lines_added.config(text='', bg='lightgrey')
+            total_lines_deleted.config(text='', bg='lightgrey')
+            global selected_repo
+            selected_repo = None
+    except IndexError:
+        pass
+
+
+repo_selector.bind('<Delete>', on_repo_selector_del)
 repo_selector.grid(row=0, column=1, padx=5, pady=2)
 
 
@@ -301,11 +330,11 @@ total_lines_added.pack(side=tk.TOP, fill=tk.X)
 total_lines_deleted = tk.Label(result_viewer, bg='lightgrey')
 total_lines_deleted.pack(side=tk.TOP, fill=tk.X)
 overall_stats = tk.Frame(result_viewer, bg='lightgrey')
-overall_commits_label = tk.Label(overall_stats, bg='white', font=('Ariel', 15))
+overall_commits_label = tk.Label(overall_stats, bg='lightgrey', font=('Ariel', 15))
 overall_commits_label.pack(side=tk.TOP, fill=tk.X)
-overall_lines_added_label = tk.Label(overall_stats, bg='green', font=('Ariel', 15))
+overall_lines_added_label = tk.Label(overall_stats, bg='lightgrey', font=('Ariel', 15))
 overall_lines_added_label.pack(side=tk.TOP, fill=tk.X)
-overall_lines_deleted_label = tk.Label(overall_stats, bg='red', font=('Ariel', 15))
+overall_lines_deleted_label = tk.Label(overall_stats, bg='lightgrey', font=('Ariel', 15))
 overall_lines_deleted_label.pack(side=tk.TOP, fill=tk.X)
 overall_stats.pack(side=tk.BOTTOM, fill=tk.X)
 result_viewer.grid(row=0, column=2, padx=5, pady=2, sticky=tk.NSEW)
@@ -314,7 +343,7 @@ result_viewer.grid(row=0, column=2, padx=5, pady=2, sticky=tk.NSEW)
 def refresh_result_viewer():
     try:
         while True:
-            if selected_repo:
+            try:
                 status_label.config(text=f'Status: {selected_repo.status}')
                 if selected_repo.status == 'Successfully analyzed':
                     status_label.config(bg='green', fg='white')
@@ -325,9 +354,12 @@ def refresh_result_viewer():
                 total_commits.config(text=f'Total commits: {len(selected_repo.commits)}', bg='white')
                 total_lines_added.config(text=f'Additions: {selected_repo.additions}', bg='green')
                 total_lines_deleted.config(text=f'Deletions: {selected_repo.deletions}', bg='red')
-            overall_commits_label.config(text=f'Total commits: {overall_commits}')
-            overall_lines_added_label.config(text=f'Additions: {overall_additions}')
-            overall_lines_deleted_label.config(text=f'Deletions: {overall_deletions}')
+            except AttributeError:
+                status_label.config(text='', bg='lightgrey')
+            if overall_commits:
+                overall_commits_label.config(text=f'Total commits: {overall_commits}', bg='white')
+                overall_lines_added_label.config(text=f'Additions: {overall_additions}', bg='green')
+                overall_lines_deleted_label.config(text=f'Deletions: {overall_deletions}', bg=r'red')
 
             def get_index(url):
                 count = 0
@@ -345,8 +377,8 @@ def refresh_result_viewer():
                         repo_selector.itemconfig(get_index(repo_url), {'bg': 'yellow', 'fg': 'black'})
                     elif repo.status == 'Not analyzed':
                         repo_selector.itemconfig(get_index(repo_url), {'bg': 'red', 'fg': 'black'})
-                except:
-                    pass
+                except Exception as e:
+                    print(e)
             sleep(0.1)
     except RuntimeError:
         pass
