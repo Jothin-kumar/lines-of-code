@@ -348,5 +348,5 @@ def refresh_result_viewer():
 Thread(target=refresh_result_viewer).start()
 main_frame.pack(side=tk.TOP, fill=tk.X, expand=True)
 tk.Button(root, text='View in GitHub', font=("Ariel", 15), fg='black', bg='lightgray', command=lambda: open_new_tab('https://github.com/Jothin-kumar/lines-of-code')).pack(side=tk.TOP, padx=5, pady=2)
-tk.Button(root, text="Made by Jothin kumar", font=("Ariel", 20, 'bold'), fg='white', bg='gray', command=lambda: open_new_tab('https://jothin.tech')).pack(side=tk.TOP, fill=tk.X)
+tk.Button(root, text="Made by Jothin kumar", font=("Ariel", 20, 'bold'), fg='white', bg='black', command=lambda: open_new_tab('https://jothin.tech')).pack(side=tk.TOP, fill=tk.X)
 root.mainloop()
