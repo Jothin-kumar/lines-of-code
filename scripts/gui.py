@@ -214,6 +214,7 @@ main_frame = tk.Frame(root, bg="lightgrey")
 
 user_and_email_selectors = tk.Frame(main_frame)
 usernames_and_orgs = tk.Listbox(user_and_email_selectors, height=15)
+usernames_and_orgs.bind('<Double-Button-1>', lambda event: add_user_or_org())
 usernames_and_orgs.pack(side=tk.TOP)
 
 
@@ -260,6 +261,7 @@ def refresh_emails():
 user_and_email_selectors.grid(row=0, column=0, padx=5, pady=2)
 
 repo_selector = tk.Listbox(main_frame, height=30, width=50)
+repo_selector.bind('<Double-Button-1>', lambda evt: add_repo_url())
 
 
 def get_repo_by_url(url):
