@@ -33,7 +33,7 @@ from time import sleep
 from webbrowser import open_new_tab
 
 from _lines_of_code import init, clear_repos, Repository
-from _github_repos import get_all_repos_of_user, set_token
+from _github_repos import get_all_repos_of_user, get_number_of_public_repos, set_token
 
 users_or_orgs = []
 email_list = []
@@ -47,15 +47,6 @@ overall_additions = 0
 overall_deletions = 0
 overall_commits = 0
 init()
-
-
-def add_repos_from_GitHub_user_or_org(user_or_org):
-    for repo in get_all_repos_of_user(user_or_org):
-        if repo not in repo_urls:
-            repo_urls.append(repo)
-            repos.append(Repository(repo, emails=email_list, auto_analyze=False))
-            refresh_repo_urls()
-            sleep(0.01)
 
 
 def add_user_or_org():
@@ -72,9 +63,23 @@ def add_user_or_org():
                 else:
                     request = get(f'https://api.github.com/users/{users_or_org}')
                 request.json()['login']
-                users_or_orgs.append(users_or_org)
-                refresh_usernames_and_orgs()
-                Thread(target=add_repos_from_GitHub_user_or_org, args=(users_or_org,)).start()
+                if get_number_of_public_repos(users_or_org) <= 50:
+                    users_or_orgs.append(users_or_org)
+                    refresh_usernames_and_orgs()
+
+                    def add_repos_from_GitHub_user_or_org(user_or_org):
+                        for repo in get_all_repos_of_user(user_or_org):
+                            if repo not in repo_urls:
+                                repo_urls.append(repo)
+                                repos.append(Repository(repo, emails=email_list, auto_analyze=False))
+                                refresh_repo_urls()
+                                sleep(0.01)
+
+                    Thread(target=add_repos_from_GitHub_user_or_org, args=(users_or_org,)).start()
+                else:
+                    messagebox.showwarning('Too many repos',
+                                           'The user/organization has more than 50 public repositories.\n'
+                                           'Please add the repos manually.')
             except KeyError:
                 messagebox.showerror('An error occurred', f'{users_or_org} is not a valid GitHub user or organization.')
 
@@ -347,6 +352,9 @@ def refresh_result_viewer():
 
 Thread(target=refresh_result_viewer).start()
 main_frame.pack(side=tk.TOP, fill=tk.X, expand=True)
-tk.Button(root, text='View in GitHub', font=("Ariel", 15), fg='black', bg='lightgray', command=lambda: open_new_tab('https://github.com/Jothin-kumar/lines-of-code')).pack(side=tk.TOP, padx=5, pady=2)
-tk.Button(root, text="Made by Jothin kumar", font=("Ariel", 20, 'bold'), fg='white', bg='black', command=lambda: open_new_tab('https://jothin.tech')).pack(side=tk.TOP, fill=tk.X)
+tk.Button(root, text='View in GitHub', font=("Ariel", 15), fg='black', bg='lightgray',
+          command=lambda: open_new_tab('https://github.com/Jothin-kumar/lines-of-code')).pack(side=tk.TOP, padx=5,
+                                                                                              pady=2)
+tk.Button(root, text="Made by Jothin kumar", font=("Ariel", 20, 'bold'), fg='white', bg='black',
+          command=lambda: open_new_tab('https://jothin.tech')).pack(side=tk.TOP, fill=tk.X)
 root.mainloop()
