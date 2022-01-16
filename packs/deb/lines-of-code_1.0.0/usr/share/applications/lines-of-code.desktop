@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Exec=lines-of-code --GUI
+Hidden=false
+NoDisplay=false
+Name=Lines of Code
+Comment=Lines of Code

@@ -1,0 +1,8 @@
+Package: lines-of-code
+Version: 1.0.0
+Architecture: all
+Maintainer: Jothin kumar (https://jothin.tech)
+Copyright: 2022 Jothin kumar
+License: MIT
+Homepage: https://github.com/Jothin-kumar/lines-of-code
+Description: An app to show the total number of lines of code written by an user.
