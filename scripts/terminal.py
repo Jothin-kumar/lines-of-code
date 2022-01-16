@@ -30,6 +30,7 @@ from time import sleep
 
 init()
 print('--------------------Welcome--------------------')
+print('Note: terminal version is deprecated and is not optimized for large quantity of repositories, using GUI version is recommended.')
 git_clone_urls = []
 emails = input('Please enter your email(s) that you use for git commits. If you use more than one email, separate them with a space: ').split(' ')
 if emails == ['']:
