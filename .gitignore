@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/packs/deb/lines-of-code_1.0.0/lines-of-code/
+/packs/deb/lines-of-code_1.0.0/usr/bin/
