@@ -1,0 +1,21 @@
+#main-navbar {
+    width: -moz-fit-content;
+    width: fit-content;
+    left: 50%;
+    display: inline-block;
+    margin-top: 10px;
+}
+.main-navbar-item {
+    display: inline-block;
+    color: white;
+    font-size: large;
+    text-decoration: none;
+    background-color: blue;
+    padding: 10px;
+    margin-top: 5px;
+}
+.main-navbar-item:hover {
+    background-color: red;
+    -ms-transform: scale(1.1);
+    transform: scale(1.1);
+}
