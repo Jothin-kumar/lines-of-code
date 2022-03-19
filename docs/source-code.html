@@ -16,17 +16,11 @@
     <title>Source code - Lines of code</title>
     <link rel="stylesheet" href="https://cdn.jothin.tech/lines-of-code/style.css">
     <link rel="stylesheet" href="style.css">
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-364T848Y3N"></script>
+    <script src="https://cdn.jothin.tech/analytics.js"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'G-364T848Y3N');
-    </script>
-    <script>
-        window.location.href = "https://github.com/Jothin-kumar/lines-of-code/?utm_source=lines-of-code&utm_medium=referral&utm_campaign=source-code";
+        setOnLog(function() {
+            window.location.href = "https://github.com/Jothin-kumar/lines-of-code/?utm_source=lines-of-code&utm_medium=referral&utm_campaign=source-code";
+        });
     </script>
 </head>
 <body>
